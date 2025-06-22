@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { View, Text, Image, StatusBar, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 
 import { MotiText, MotiView } from "moti";
@@ -10,32 +9,32 @@ import {
   ArrowRight01Icon,
   Globe02Icon,
   SecurityCheckIcon,
-  ZapFreeIcons,
   ZapIcon,
 } from "@hugeicons/core-free-icons";
-import { InternetIcon } from "@hugeicons/core-free-icons";
 
 export default function Welcome() {
   const router = useRouter();
 
   const [next, setNext] = useState(0);
 
+  const [pressed, setPressed] = useState(false);
+
   return (
-    <View className="flex-1 inset-0">
+    <View className="flex-1 inset-0 bg-black">
       <StatusBar barStyle="light-content" />
 
       {/* background */}
       <Background />
 
       <View className="flex-1 items-center justify-between pt-10 pb-0">
+        {/* icon and text */}
         <View className="flex-grow items-center justify-center">
-          {/* icon and text */}
           <Image
             style={{ width: 200, height: 200 }}
             source={require("@/assets/images/icon.png")}
           />
           <MotiText
-            from={{ opacity: 1, translateY: 0 }}
+            from={{ opacity: 0, translateY: 0 }}
             animate={{
               opacity: next === 0 ? 1 : 0,
               translateY: next === 0 ? 0 : -20,
@@ -61,13 +60,14 @@ export default function Welcome() {
             width: "90%",
             shadowColor: "#000",
             shadowOffset: { width: 0, height: 8 },
-            shadowOpacity: 0.15,
+            shadowOpacity: 0.5,
             shadowRadius: 16,
-            backgroundColor: "rgba(255,255,255,0.6)",
+            backgroundColor: "rgba(255,255,255,0.5)",
             borderRadius: 28,
             borderWidth: 0,
             marginBottom: 32,
             padding: 0,
+            paddingBottom: 40,
           }}
           transition={{
             type: "spring",
@@ -151,13 +151,9 @@ export default function Welcome() {
         {/* continue button */}
         <View className="w-full items-center justify-center">
           <TouchableOpacity
-            className="bg-black/30 absolute z-50 bottom-16 flex flex-row items-center justify-around rounded-full mx-auto px-10 py-3 shadow-lg shadow-black/20"
-            style={{
-              shadowColor: "rgba(0, 0, 0, 0.2)",
-              shadowOffset: { width: 0, height: 2 },
-              shadowOpacity: 0.8,
-              shadowRadius: 4,
-            }}
+            className="bg-black/20 absolute z-50 bottom-16 rounded-full shadow-lg"
+            onPressIn={() => setPressed(true)}
+            onPressOut={() => setPressed(false)}
             onPress={() =>
               setNext((prev) => {
                 if (prev < 3) {
@@ -169,13 +165,31 @@ export default function Welcome() {
               })
             }
           >
-            <Text className="text-white text-xl">continue</Text>
-            <HugeiconsIcon
-              icon={ArrowRight01Icon}
-              size={24}
-              color="#ffffff"
-              strokeWidth={1.5}
-            />
+            <MotiView
+              from={{ scale: 0.9 }}
+              animate={{ scale: pressed ? 0.9 : 1 }}
+              transition={{
+                type: "spring",
+                
+              }}
+              style={{
+                backgroundColor: "rgba(30, 41, 59, 0.5)",
+                backdropFilter: "blur(10px)",
+                shadowColor: "rgba(0, 0, 0, 0.5)",
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.8,
+                shadowRadius: 8,
+              }}
+              className="flex flex-row items-center rounded-full justify-around px-10 py-3"
+            >
+              <Text className="text-white text-xl">continue</Text>
+              <HugeiconsIcon
+                icon={ArrowRight01Icon}
+                size={24}
+                color="#ffffff"
+                strokeWidth={1.5}
+              />
+            </MotiView>
           </TouchableOpacity>
         </View>
       </View>
