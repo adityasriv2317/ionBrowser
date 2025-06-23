@@ -122,7 +122,7 @@ export default function BottomBar({
         style={{
           maxWidth: bottomState == "openMenu" ? "80%" : "75%",
         }}
-        className={`flex-row absolute z-100 border border-gray-500 bottom-20 max-h-[6%] rounded-full gap-2 items-center justify-between p-2 ${colorType == 1 ? "bg-gray-950/75" : "bg-white/20"} `}
+        className={`flex-row absolute z-100 border border-gray-500 bottom-20 max-h-[6%] rounded-full gap-2 items-center justify-between p-2 ${colorType !== 1 ? "bg-white/20" : "bg-gray-950/75"} `}
       >
         {/* searchbox */}
         <TouchableOpacity

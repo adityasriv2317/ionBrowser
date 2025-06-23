@@ -17,7 +17,7 @@ export default function PageView({ onColorChange }: PageViewProps) {
       className="flex-1 absolute h-full w-full pt-12"
     >
       <WebView
-        source={{ uri: "https://apple.co" }}
+        source={{ uri: "https://youtube.com" }}
         style={{
           flex: 1,
           backgroundColor: "white",
