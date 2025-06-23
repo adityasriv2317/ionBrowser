@@ -4,6 +4,7 @@ import { useRouter } from "expo-router";
 
 import { MotiText, MotiView } from "moti";
 import Background from "@/components/SplashBackground";
+
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import {
   ArrowRight01Icon,
@@ -11,6 +12,7 @@ import {
   SecurityCheckIcon,
   ZapIcon,
 } from "@hugeicons/core-free-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Welcome() {
   const router = useRouter();
@@ -154,23 +156,21 @@ export default function Welcome() {
             className="bg-black/20 absolute z-50 bottom-16 rounded-full shadow-lg"
             onPressIn={() => setPressed(true)}
             onPressOut={() => setPressed(false)}
-            onPress={() =>
-              setNext((prev) => {
-                if (prev < 3) {
-                  return prev + 1;
-                } else {
-                  router.push("/");
-                  return 0; // Prevents incrementing beyond 3
-                }
-              })
-            }
+            onPress={async () => {
+              if (next < 3) {
+                setNext((prev) => prev + 1);
+              } else {
+                await AsyncStorage.setItem("welcomeScreenShown", "true");
+                router.replace("/");
+                setNext(0); // Prevents incrementing beyond 3
+              }
+            }}
           >
             <MotiView
               from={{ scale: 0.9 }}
               animate={{ scale: pressed ? 0.9 : 1 }}
               transition={{
                 type: "spring",
-                
               }}
               style={{
                 backgroundColor: "rgba(30, 41, 59, 0.5)",
