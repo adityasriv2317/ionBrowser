@@ -99,13 +99,12 @@ export default function App() {
   }
 
   return (
-    <SafeAreaView
-      style={{ backgroundColor: accentColor }}
-      className="w-full h-full flex m-0 items-center justify-center"
-    >
+    <View style={{ backgroundColor: accentColor }}>
       <StatusBar barStyle={statusBarAccent} />
-      <PageView onColorChange={setAccentColor} />
-      <BottomBar accentColor={statusBarAccent} />
-    </SafeAreaView>
+      <SafeAreaView className="w-full h-full flex m-0 items-center justify-center">
+        <PageView onColorChange={setAccentColor} />
+        <BottomBar accentColor={statusBarAccent} />
+      </SafeAreaView>
+    </View>
   );
 }

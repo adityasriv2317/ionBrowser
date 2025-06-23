@@ -29,39 +29,65 @@ export default function BottomBar({
     accentColor !== "light-content" ? setColorType(1) : setColorType(0);
   }, [accentColor]);
 
+  // bottomBar button states
+  const [showTabs, setShowTabs] = useState(true);
+
   // bottom bar animation states
   const [bottomState, setBottomState] = useState<
-    "tap" | "swipeUp" | "swipeDown" | "init" | "null"
+    "tap" | "swipeUp" | "swipeDown" | "null" | "openMenu" | "begin"
   >("null");
 
+  // bottom bar gesturs
   const tapGesture = Gesture.Tap().onEnd(() => {
-    runOnJS(setBottomState)("tap");
+    if (bottomState == "swipeDown" || bottomState == "tap") {
+      runOnJS(setBottomState)("null");
+      runOnJS(setShowTabs)(true);
+    } else if (bottomState == "null") {
+      runOnJS(setBottomState)("tap");
+    }
   });
   const swipeGesture = Gesture.Pan().onEnd((e) => {
     if (e.velocityY < -200) {
       // Swipe up
-      runOnJS(setBottomState)("swipeUp");
+      if (bottomState == "swipeDown") {
+        runOnJS(setShowTabs)(true);
+        runOnJS(setBottomState)("swipeUp");
+      } else {
+        runOnJS(setShowTabs)(false);
+        runOnJS(setBottomState)("openMenu");
+      }
     } else if (e.velocityY > 200) {
       // Swipe down
-      runOnJS(setBottomState)("swipeDown");
+      if (bottomState == "openMenu") {
+        runOnJS(setShowTabs)(true);
+        runOnJS(setBottomState)("null");
+      } else {
+        runOnJS(setShowTabs)(false);
+        runOnJS(setBottomState)("swipeDown");
+      }
     }
   });
-
   const animationConfig = {
     tap: {
       scale: 1.1,
     },
     swipeUp: {
-      translateY: -100,
-      opacity: 0.5,
+      translateY: 0,
+      opacity: 1,
     },
     swipeDown: {
-      translateY: 100,
-      opacity: 0.5,
+      translateY: 50,
+      scale: 0.7,
+      opacity: 0.8,
     },
-    init: {
-      opacity: 0,
-      translateY: 60,
+    openMenu: {
+      translateY: -350,
+      opacity: 1,
+      scale: 1.2,
+    },
+    begin: {
+      translateY: 40,
+      opacity: 0.5,
       scale: 0.8,
     },
     null: {
@@ -71,29 +97,70 @@ export default function BottomBar({
     },
   };
 
+  // text input gestures
+  const inputTap = Gesture.Tap().onEnd(() => {
+    console.log("Text Input Tapped");
+  });
+  const inputSwipe = Gesture.Pan().onEnd((e) => {
+    if (e.velocityY < -200) {
+      // Swipe up
+      console.log("Swiped Up on Text Input");
+    } else if (e.velocityY > 200) {
+      // Swipe down
+      console.log("Swiped Down on Text Input");
+    }
+  });
+
   const gestureCompose = Gesture.Race(tapGesture, swipeGesture);
+  const textBoxCompose = Gesture.Race(inputTap, inputSwipe);
 
   return (
     <GestureDetector gesture={gestureCompose}>
       <MotiView
-        from={animationConfig.init}
+        from={animationConfig.begin}
         animate={animationConfig[bottomState]}
-        className={`flex-row absolute z-100 border border-gray-500 bottom-16 max-w-[75%] max-h-[6%] rounded-full gap-2 items-center justify-between p-2 ${colorType == 1 ? "bg-gray-950/75" : "bg-white/20"} `}
+        style={{
+          maxWidth: bottomState == "openMenu" ? "80%" : "75%",
+        }}
+        className={`flex-row absolute z-100 border border-gray-500 bottom-20 max-h-[6%] rounded-full gap-2 items-center justify-between p-2 ${colorType == 1 ? "bg-gray-950/75" : "bg-white/20"} `}
       >
         {/* searchbox */}
         <TouchableOpacity
           className="flex-1 border border-gray-400 bg-white/20 rounded-full"
-          onPress={() => console.log("Search Box Pressed")}
+          onPress={() => {
+            console.log("Search Box Pressed");
+            if (bottomState == "swipeDown") {
+              setBottomState("null");
+              setShowTabs(true);
+            } else if (bottomState == "null") {
+              setBottomState("openMenu");
+            }
+          }}
         >
-          <TextInput
-            placeholder="Search or enter URL"
-            placeholderTextColor="#fff"
-            className="text-black text-center"
-            style={{ paddingHorizontal: 10 }}
-          />
+          <GestureDetector gesture={textBoxCompose}>
+            <TextInput
+              editable={bottomState == "swipeDown" ? false : true}
+              placeholder="Search or enter URL"
+              placeholderTextColor="#fff"
+              className="text-black text-center h-12"
+              style={{ paddingHorizontal: 10 }}
+              onFocus={() => {
+                setBottomState("openMenu");
+                setShowTabs(false);
+              }}
+              onBlur={() => {
+                if (bottomState == "openMenu") {
+                  setBottomState("null");
+                }
+              }}
+            />
+          </GestureDetector>
         </TouchableOpacity>
         {/* tab view button */}
         <TouchableOpacity
+          style={{
+            display: showTabs ? "flex" : "none",
+          }}
           className="bg-white/20 border border-gray-400 rounded-full p-2"
           onPress={() => console.log("Tab View Pressed")}
         >
