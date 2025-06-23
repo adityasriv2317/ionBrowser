@@ -17,7 +17,7 @@ export default function PageView({ onColorChange }: PageViewProps) {
       className="flex-1 absolute h-full w-full pt-12"
     >
       <WebView
-        source={{ uri: "https://figma.com" }}
+        source={{ uri: "https://apple.com" }}
         style={{
           flex: 1,
           backgroundColor: "white",

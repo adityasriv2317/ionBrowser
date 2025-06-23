@@ -6,6 +6,7 @@ import {
   TextInput,
   Pressable,
 } from "react-native";
+import { useState } from "react";
 
 import { useRouter } from "expo-router";
 import { useEffect } from "react";
@@ -14,12 +15,23 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import { CreditCardIcon } from "@hugeicons/core-free-icons";
 
-export default function BottomBar() {
+export default function BottomBar({
+  accentColor,
+}: {
+  accentColor: "light-content" | "dark-content" | "default";
+}) {
+  const [colorType, setColorType] = useState(0);
+  useEffect(() => {
+    accentColor === "light-content" ? setColorType(0) : setColorType(1);
+  }, [accentColor]);
+
   return (
-    <View className="flex-row absolute z-100 bottom-16 max-w-[75%] max-h-[6%] rounded-full gap-2 items-center justify-between p-2 bg-gray-800/50">
+    <View
+      className={`flex-row absolute z-100 border border-gray-500 bottom-16 max-w-[75%] max-h-[6%] rounded-full gap-2 items-center justify-between p-2 ${colorType == 1 ? "bg-gray-950/75" : "bg-white/20"} `}
+    >
       {/* searchbox */}
       <TouchableOpacity
-        className="flex-1 bg-white/50 rounded-full"
+        className="flex-1 border border-gray-400 bg-white/20 rounded-full"
         onPress={() => console.log("Search Box Pressed")}
       >
         <TextInput
@@ -31,14 +43,14 @@ export default function BottomBar() {
       </TouchableOpacity>
       {/* tab view button */}
       <TouchableOpacity
-        className="bg-white/50 rounded-full p-2"
+        className="bg-white/20 border border-gray-400 rounded-full p-2"
         onPress={() => console.log("Tab View Pressed")}
       >
         {/* HugeiconsIcon */}
         <HugeiconsIcon
           icon={CreditCardIcon}
           strokeWidth={2}
-          color={"#888888"}
+          color={"#ddd"}
         />
       </TouchableOpacity>
     </View>

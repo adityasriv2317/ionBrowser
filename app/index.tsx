@@ -105,7 +105,7 @@ export default function App() {
     >
       <StatusBar barStyle={statusBarAccent} />
       <PageView onColorChange={setAccentColor} />
-      <BottomBar />
+      <BottomBar accentColor={statusBarAccent} />
     </SafeAreaView>
   );
 }
