@@ -63,8 +63,8 @@ export default function App() {
       // console.log("Setting status bar to light-content");
       // console.log(accentColor);
     } else {
-      console.log("Setting status bar to dark-content");
-      // setStatusBarAccent("dark-content");
+      // console.log("Setting status bar to dark-content");
+      setStatusBarAccent("dark-content");
       // console.log(accentColor);
     }
   }
