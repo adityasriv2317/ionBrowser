@@ -1,5 +1,5 @@
 import React from "react";
-import { View, Text, Platform } from "react-native";
+import { View, Text, ScrollView, Platform } from "react-native";
 import WebView from "react-native-webview";
 
 import injectedJs from "@/constants/metaInjection";
@@ -17,7 +17,7 @@ export default function PageView({ onColorChange }: PageViewProps) {
       className="flex-1 absolute h-full w-full pt-12"
     >
       <WebView
-        source={{ uri: "https://microsoft.com" }}
+        source={{ uri: "https://hotstar.com" }}
         style={{
           flex: 1,
           backgroundColor: "white",
