@@ -9,15 +9,22 @@ interface PageViewProps {
 }
 
 export default function PageView({ onColorChange }: PageViewProps) {
-  const [accentColor, setAccentColor] = React.useState("#000000");
+  const [accentColor, setAccentColor] = React.useState("transparent")
 
   return (
     <View
-      style={{ backgroundColor: accentColor }}
-      className="flex-1 absolute h-full w-full pt-12"
+      style={{
+        backgroundColor: accentColor,
+        flex: 1,
+        position: "absolute",
+        overflow: "hidden",
+        inset: 0,
+        paddingTop: Platform.OS === "android" ? 36 : 0, // Adjust
+        paddingBottom: 0, // No bottom padding needed
+      }}
     >
       <WebView
-        source={{ uri: "https://youtube.com" }}
+        source={{ uri: "https://google.com" }}
         style={{
           flex: 1,
           backgroundColor: "white",

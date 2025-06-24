@@ -1,22 +1,11 @@
-import { MotiView, useAnimationState } from "moti";
-import {
-  View,
-  Text,
-  TouchableOpacity,
-  TextInput,
-  Pressable,
-} from "react-native";
-import { useState } from "react";
-
+import { MotiView } from "moti";
+import { TouchableOpacity, TextInput, Keyboard } from "react-native";
+import { useRef, useState, useEffect } from "react";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import { runOnJS } from "react-native-reanimated";
-
-import { useRouter } from "expo-router";
-import { useEffect } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import { CreditCardIcon } from "@hugeicons/core-free-icons";
+import { animationConfig, BottomBarState } from "@/constants/bottomBar";
 
 export default function BottomBar({
   accentColor,
@@ -31,25 +20,27 @@ export default function BottomBar({
 
   // bottomBar button states
   const [showTabs, setShowTabs] = useState(true);
-
+  const searchBoxRef = useRef<TextInput>(null);
   // bottom bar animation states
-  const [bottomState, setBottomState] = useState<
-    "tap" | "swipeUp" | "swipeDown" | "null" | "openMenu" | "begin"
-  >("null");
+  const [bottomState, setBottomState] = useState<BottomBarState>("normalState");
 
   // bottom bar gesturs
   const tapGesture = Gesture.Tap().onEnd(() => {
-    if (bottomState == "swipeDown" || bottomState == "tap") {
-      runOnJS(setBottomState)("null");
+    if (bottomState == "minimizedState") {
+      runOnJS(setBottomState)("normalState");
+      // console.log("Search Box Pressed");
       runOnJS(setShowTabs)(true);
-    } else if (bottomState == "null") {
-      runOnJS(setBottomState)("tap");
+    } else if (bottomState == "normalState") {
+      runOnJS(setBottomState)("tabView");
+    } else if (bottomState == "tabView") {
+      // console.log("Tab release Pressed");
+      runOnJS(setBottomState)("normalState");
     }
   });
   const swipeGesture = Gesture.Pan().onEnd((e) => {
     if (e.velocityY < -200) {
       // Swipe up
-      if (bottomState == "swipeDown") {
+      if (bottomState == "minimizedState") {
         runOnJS(setShowTabs)(true);
         runOnJS(setBottomState)("swipeUp");
       } else {
@@ -60,42 +51,13 @@ export default function BottomBar({
       // Swipe down
       if (bottomState == "openMenu") {
         runOnJS(setShowTabs)(true);
-        runOnJS(setBottomState)("null");
+        runOnJS(setBottomState)("normalState");
       } else {
         runOnJS(setShowTabs)(false);
-        runOnJS(setBottomState)("swipeDown");
+        runOnJS(setBottomState)("minimizedState");
       }
     }
   });
-  const animationConfig = {
-    tap: {
-      scale: 1.1,
-    },
-    swipeUp: {
-      translateY: 0,
-      opacity: 1,
-    },
-    swipeDown: {
-      translateY: 50,
-      scale: 0.7,
-      opacity: 0.8,
-    },
-    openMenu: {
-      translateY: -350,
-      opacity: 1,
-      scale: 1.2,
-    },
-    begin: {
-      translateY: 40,
-      opacity: 0.5,
-      scale: 0.8,
-    },
-    null: {
-      opacity: 1,
-      translateY: 0,
-      scale: 1,
-    },
-  };
 
   // text input gestures
   const inputTap = Gesture.Tap().onEnd(() => {
@@ -114,6 +76,39 @@ export default function BottomBar({
   const gestureCompose = Gesture.Race(tapGesture, swipeGesture);
   const textBoxCompose = Gesture.Race(inputTap, inputSwipe);
 
+  // detect keyboard visibility
+  useEffect(() => {
+    const handleKeyboardHide = () => {
+      if (bottomState === "openMenu") {
+        // setBottomState("normalState");
+        // setShowTabs(true);
+        searchBoxRef.current?.blur();
+      }
+      if (bottomState === "swipeUp") {
+        setBottomState("normalState");
+        setShowTabs(true);
+        searchBoxRef.current?.blur();
+      }
+      if (bottomState === "minimizedState") {
+        setBottomState("normalState");
+        setShowTabs(true);
+      }
+    };
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      handleKeyboardHide
+    );
+
+    if (bottomState == "tabView") {
+      searchBoxRef.current?.blur();
+    }
+
+    return () => {
+      // keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, [bottomState]);
+
   return (
     <GestureDetector gesture={gestureCompose}>
       <MotiView
@@ -129,17 +124,18 @@ export default function BottomBar({
           className="flex-1 border border-gray-400 bg-white/20 rounded-full"
           onPress={() => {
             console.log("Search Box Pressed");
-            if (bottomState == "swipeDown") {
-              setBottomState("null");
+            if (bottomState == "minimizedState") {
+              setBottomState("normalState");
               setShowTabs(true);
-            } else if (bottomState == "null") {
+            } else if (bottomState == "normalState") {
               setBottomState("openMenu");
             }
           }}
         >
           <GestureDetector gesture={textBoxCompose}>
             <TextInput
-              editable={bottomState == "swipeDown" ? false : true}
+              ref={searchBoxRef}
+              editable={bottomState == "minimizedState" ? false : true}
               placeholder="Search or enter URL"
               placeholderTextColor="#fff"
               className="text-black text-center h-12"
@@ -149,9 +145,10 @@ export default function BottomBar({
                 setShowTabs(false);
               }}
               onBlur={() => {
-                if (bottomState == "openMenu") {
-                  setBottomState("null");
-                }
+                // if (bottomState == "openMenu") {
+                //   setBottomState("null");
+                // }
+                console.log("Text Input Blurred");
               }}
             />
           </GestureDetector>
@@ -162,7 +159,7 @@ export default function BottomBar({
             display: showTabs ? "flex" : "none",
           }}
           className="bg-white/20 border border-gray-400 rounded-full p-2"
-          onPress={() => console.log("Tab View Pressed")}
+          // onPress={() => console.log("Tab View Pressed")}
         >
           {/* HugeiconsIcon */}
           <HugeiconsIcon icon={CreditCardIcon} strokeWidth={2} color={"#ddd"} />
