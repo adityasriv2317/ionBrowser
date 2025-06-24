@@ -9,7 +9,7 @@ interface PageViewProps {
 }
 
 export default function PageView({ onColorChange }: PageViewProps) {
-  const [accentColor, setAccentColor] = React.useState("transparent")
+  const [accentColor, setAccentColor] = React.useState("transparent");
 
   return (
     <View
@@ -27,7 +27,7 @@ export default function PageView({ onColorChange }: PageViewProps) {
         source={{ uri: "https://google.com" }}
         style={{
           flex: 1,
-          backgroundColor: "white",
+          backgroundColor: "#00000000",
           height: "100%",
           width: "100%",
           position: "absolute",
