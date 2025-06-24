@@ -13,29 +13,18 @@ export default function BottomBar({
   accentColor: "light-content" | "dark-content" | "default";
 }) {
   // color type constant
-  const [colorType, setColorType] = useState(0);
-  useEffect(() => {
-    accentColor !== "light-content" ? setColorType(1) : setColorType(1);
-  }, [accentColor]);
+  const [colorType, setColorType] = useState(1); // 1 for light, 0 for dark
+  // useEffect(() => {
+  //   setColorType(accentColor === "light-content" ? 1 : 0);
+  // }, [accentColor]);
 
   // bottomBar button states
   const [showTabs, setShowTabs] = useState(true);
   const searchBoxRef = useRef<TextInput>(null);
   // bottom bar animation states
   const [bottomState, setBottomState] = useState<BottomBarState>("normalState");
-  const [bottomStateStack, setBottomStateStack] = useState({
-    current: "normalState",
-    previous: "begin",
-  });
-
-  useEffect(() => {
-    // Update the bottomStateStack whenever bottomState changes
-    setBottomStateStack((prev) => ({
-      current: bottomState,
-      previous: prev.current,
-    }));
-  }, [bottomState]);
-
+  const [previousState, setPreviousState] =
+    useState<BottomBarState>(bottomState);
   // bottom bar gesturs
   const tapGesture = Gesture.Tap().onEnd(() => {
     if (bottomState == "minimizedState") {
@@ -70,15 +59,31 @@ export default function BottomBar({
 
   // text input gestures
   const inputTap = Gesture.Tap().onEnd(() => {
-    console.log("Text Input Tapped");
+    // console.log("Text Input Tapped");
   });
   const inputSwipe = Gesture.Pan().onEnd((e) => {
     if (e.velocityY < -200) {
       // Swipe up
-      console.log("Swiped Up on Text Input");
+      if (bottomState == "normalState") {
+        setBottomState("openMenu");
+        searchBoxRef.current?.blur();
+        setShowTabs(false);
+      } else if (bottomState == "minimizedState") {
+        setBottomState("normalState");
+        setShowTabs(true);
+      }
+      // console.log("Swiped Up on Text Input");
     } else if (e.velocityY > 200) {
       // Swipe down
-      console.log("Swiped Down on Text Input");
+      if (bottomState === "openMenu") {
+        setBottomState("normalState");
+        searchBoxRef.current?.blur();
+        setShowTabs(true);
+      } else if (bottomState === "normalState") {
+        setBottomState("minimizedState");
+        searchBoxRef.current?.blur();
+        setShowTabs(false);
+      }
     }
   });
 
@@ -89,36 +94,30 @@ export default function BottomBar({
   useEffect(() => {
     const handleKeyboardHide = () => {
       if (bottomState === "openMenu") {
-        // setBottomState("openMenu");
-        // setShowTabs(true);
-        searchBoxRef.current?.blur();
+        // searchBoxRef.current?.blur();
       } else if (bottomState === "minimizedState") {
         setBottomState("normalState");
         setShowTabs(true);
       } else if (
         bottomState === "searchState" &&
-        bottomStateStack.previous === "normalState"
+        previousState === "normalState"
       ) {
-        setBottomState("normalState");
-        searchBoxRef.current?.blur();
+        setBottomState("normalState")
         setShowTabs(true);
-      } else if (
-        bottomState === "searchState" &&
-        bottomStateStack.previous === "tabView"
-      ) {
+      } else if (bottomState === "searchState" && previousState === "tabView") {
         setBottomState("tabView");
-        searchBoxRef.current?.blur();
         setShowTabs(true);
+      } else {
+        setBottomState("minimizedState");
+        setShowTabs(false);
       }
+
+      searchBoxRef.current?.blur();
     };
     const keyboardDidHideListener = Keyboard.addListener(
       "keyboardDidHide",
       handleKeyboardHide
     );
-
-    if (bottomState == "tabView") {
-      searchBoxRef.current?.blur();
-    }
 
     return () => {
       // keyboardDidShowListener.remove();
@@ -137,49 +136,52 @@ export default function BottomBar({
         className={`flex-row absolute z-100 border border-gray-500 bottom-20 max-h-[7%] rounded-full gap-2 items-center justify-between p-2 ${colorType !== 1 ? "bg-white/20" : "bg-gray-950/75"} `}
       >
         {/* searchbox */}
-        <TouchableOpacity
-          className="flex-1 border border-gray-400 bg-white/20 rounded-full"
-          onPress={() => {
-            console.log("Search Box Pressed");
-            if (bottomState == "minimizedState") {
-              setBottomState("normalState");
-              setShowTabs(true);
-            } else if (bottomState == "normalState") {
-              setBottomState("openMenu");
-            }
-          }}
-        >
-          <GestureDetector gesture={textBoxCompose}>
+        <GestureDetector gesture={textBoxCompose}>
+          <TouchableOpacity
+            className="flex-1 border border-gray-400 bg-white/20 rounded-full"
+            onPress={() => {
+              if (bottomState == "minimizedState") {
+                setBottomState("normalState");
+                setShowTabs(true);
+              }
+            }}
+          >
             <TextInput
               ref={searchBoxRef}
               editable={bottomState == "minimizedState" ? false : true}
+              disableFullscreenUI={true}
               placeholder="Search or enter URL"
               placeholderTextColor="#fff"
               className="text-black text-center h-12"
               style={{ paddingHorizontal: 10 }}
               onFocus={() => {
                 if (bottomState == "normalState" || bottomState == "tabView") {
+                  setPreviousState(bottomState);
                   setBottomState("searchState");
                   setShowTabs(false);
                 }
               }}
               onBlur={() => {
-                console.log("Text Input Blurred");
+                // console.log("Text Input Blurred");
               }}
             />
-          </GestureDetector>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </GestureDetector>
         {/* tab view button */}
         <TouchableOpacity
           style={{
             display: showTabs ? "flex" : "none",
           }}
           className="bg-white/20 border border-gray-400 rounded-full p-2"
-          onPress={() =>
-            bottomState == "tabView"
-              ? setBottomState("normalState")
-              : setBottomState("tabView")
-          }
+          onPress={() => {
+            if (bottomState == "tabView") {
+              setPreviousState(bottomState);
+              setBottomState("normalState");
+            } else {
+              setPreviousState(bottomState);
+              setBottomState("tabView");
+            }
+          }}
         >
           {/* HugeiconsIcon */}
           <HugeiconsIcon icon={CreditCardIcon} strokeWidth={2} color={"#ddd"} />
