@@ -2,10 +2,6 @@ export const animationConfig = {
   tabView: {
     scale: 1.1,
   },
-  swipeUp: {
-    translateY: 0,
-    opacity: 1,
-  },
   minimizedState: {
     translateY: 50,
     scale: 0.7,
@@ -26,13 +22,18 @@ export const animationConfig = {
     translateY: 0,
     scale: 1,
   },
+  searchState: {
+    translateY: -350,
+    scale: 1.2,
+    opacity: 1,
+  },
 };
 
 export type BottomBarState =
-  | "minimizedState"
-  | "normalState"
-  | "openMenu"
-  | "swipeUp"
-  | "begin"
-  | "tabView";
+  | "minimizedState" // minimzed to show only only link
+  | "normalState" // normal state with tabs and links
+  | "openMenu" // open browser menu
+  | "begin" // animation start state
+  | "tabView" // show tabs manager
+  | "searchState"; // url bar is focused for searching
 // This file contains the animation configurations for the bottom bar in the IonBrowser app.

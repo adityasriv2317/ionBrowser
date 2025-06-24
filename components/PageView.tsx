@@ -19,7 +19,7 @@ export default function PageView({ onColorChange }: PageViewProps) {
         position: "absolute",
         overflow: "hidden",
         inset: 0,
-        paddingTop: Platform.OS === "android" ? 36 : 0, // Adjust
+        paddingTop: Platform.OS === "android" ? 40 : 0, // Adjust
         paddingBottom: 0, // No bottom padding needed
       }}
     >
