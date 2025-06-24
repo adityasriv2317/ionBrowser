@@ -13,6 +13,7 @@ import {
   ZapIcon,
 } from "@hugeicons/core-free-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import HomeLiquid from "./HomeLiquid";
 
 export default function Welcome() {
   const router = useRouter();
@@ -26,7 +27,8 @@ export default function Welcome() {
       <StatusBar barStyle="light-content" />
 
       {/* background */}
-      <Background />
+      {/* <Background /> */}
+      <HomeLiquid />
 
       <View className="flex-1 items-center justify-between pt-10 pb-0">
         {/* icon and text */}
@@ -161,7 +163,7 @@ export default function Welcome() {
                 setNext((prev) => prev + 1);
               } else {
                 await AsyncStorage.setItem("welcomeScreenShown", "true");
-                router.replace("/");
+                router.push("/");
                 setNext(0); // Prevents incrementing beyond 3
               }
             }}

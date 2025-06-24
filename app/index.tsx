@@ -10,8 +10,7 @@ import BottomBar from "@/components/BottomBar";
 import PageView from "@/components/PageView";
 
 import { colorCompare } from "@/constants/windowColors";
-import WebView from "react-native-webview";
-import HomeLiquid from "./(adons)/homeLiquid";
+import HomeLiquid from "./(adons)/HomeLiquid";
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -38,7 +37,7 @@ export default function App() {
       const welcomeScreenShown =
         await AsyncStorage.getItem("welcomeScreenShown");
       if (welcomeScreenShown === null) {
-        router.replace("/welcome");
+        router.replace("/Welcome");
       } else {
         setLoading(false);
       }

@@ -25,15 +25,16 @@ export default function BottomBar({
   const [bottomState, setBottomState] = useState<BottomBarState>("normalState");
   const [previousState, setPreviousState] =
     useState<BottomBarState>(bottomState);
+
   // bottom bar gesturs
   const tapGesture = Gesture.Tap().onEnd(() => {
     if (bottomState == "minimizedState") {
       runOnJS(setBottomState)("normalState");
-      // console.log("Search Box Pressed");
       runOnJS(setShowTabs)(true);
-    } else if (bottomState == "normalState") {
-      runOnJS(setBottomState)("searchState");
     }
+    //  else if (bottomState == "normalState") {
+    // runOnJS(setBottomState)("searchState");
+    // }
   });
   const swipeGesture = Gesture.Pan().onEnd((e) => {
     if (e.velocityY < -200) {
@@ -102,7 +103,7 @@ export default function BottomBar({
         bottomState === "searchState" &&
         previousState === "normalState"
       ) {
-        setBottomState("normalState")
+        setBottomState("normalState");
         setShowTabs(true);
       } else if (bottomState === "searchState" && previousState === "tabView") {
         setBottomState("tabView");
