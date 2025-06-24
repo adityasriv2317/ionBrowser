@@ -23,6 +23,18 @@ export default function BottomBar({
   const searchBoxRef = useRef<TextInput>(null);
   // bottom bar animation states
   const [bottomState, setBottomState] = useState<BottomBarState>("normalState");
+  const [bottomStateStack, setBottomStateStack] = useState({
+    current: "normalState",
+    previous: "begin",
+  });
+
+  useEffect(() => {
+    // Update the bottomStateStack whenever bottomState changes
+    setBottomStateStack((prev) => ({
+      current: bottomState,
+      previous: prev.current,
+    }));
+  }, [bottomState]);
 
   // bottom bar gesturs
   const tapGesture = Gesture.Tap().onEnd(() => {
@@ -83,8 +95,18 @@ export default function BottomBar({
       } else if (bottomState === "minimizedState") {
         setBottomState("normalState");
         setShowTabs(true);
-      } else if (bottomState === "searchState") {
+      } else if (
+        bottomState === "searchState" &&
+        bottomStateStack.previous === "normalState"
+      ) {
         setBottomState("normalState");
+        searchBoxRef.current?.blur();
+        setShowTabs(true);
+      } else if (
+        bottomState === "searchState" &&
+        bottomStateStack.previous === "tabView"
+      ) {
+        setBottomState("tabView");
         searchBoxRef.current?.blur();
         setShowTabs(true);
       }
@@ -136,10 +158,10 @@ export default function BottomBar({
               className="text-black text-center h-12"
               style={{ paddingHorizontal: 10 }}
               onFocus={() => {
-                bottomState == "normalState"
-                  ? setBottomState("searchState")
-                  : null;
-                setShowTabs(false);
+                if (bottomState == "normalState" || bottomState == "tabView") {
+                  setBottomState("searchState");
+                  setShowTabs(false);
+                }
               }}
               onBlur={() => {
                 console.log("Text Input Blurred");
