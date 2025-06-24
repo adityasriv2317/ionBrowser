@@ -15,7 +15,7 @@ export default function BottomBar({
   // color type constant
   const [colorType, setColorType] = useState(0);
   useEffect(() => {
-    accentColor !== "light-content" ? setColorType(1) : setColorType(0);
+    accentColor !== "light-content" ? setColorType(1) : setColorType(1);
   }, [accentColor]);
 
   // bottomBar button states
@@ -31,10 +31,7 @@ export default function BottomBar({
       // console.log("Search Box Pressed");
       runOnJS(setShowTabs)(true);
     } else if (bottomState == "normalState") {
-      runOnJS(setBottomState)("tabView");
-    } else if (bottomState == "tabView") {
-      // console.log("Tab release Pressed");
-      runOnJS(setBottomState)("normalState");
+      runOnJS(setBottomState)("searchState");
     }
   });
   const swipeGesture = Gesture.Pan().onEnd((e) => {
@@ -42,8 +39,8 @@ export default function BottomBar({
       // Swipe up
       if (bottomState == "minimizedState") {
         runOnJS(setShowTabs)(true);
-        runOnJS(setBottomState)("swipeUp");
-      } else {
+        runOnJS(setBottomState)("normalState");
+      } else if (bottomState == "normalState") {
         runOnJS(setShowTabs)(false);
         runOnJS(setBottomState)("openMenu");
       }
@@ -80,17 +77,15 @@ export default function BottomBar({
   useEffect(() => {
     const handleKeyboardHide = () => {
       if (bottomState === "openMenu") {
-        // setBottomState("normalState");
+        // setBottomState("openMenu");
         // setShowTabs(true);
         searchBoxRef.current?.blur();
-      }
-      if (bottomState === "swipeUp") {
+      } else if (bottomState === "minimizedState") {
         setBottomState("normalState");
         setShowTabs(true);
-        searchBoxRef.current?.blur();
-      }
-      if (bottomState === "minimizedState") {
+      } else if (bottomState === "searchState") {
         setBottomState("normalState");
+        searchBoxRef.current?.blur();
         setShowTabs(true);
       }
     };
@@ -117,7 +112,7 @@ export default function BottomBar({
         style={{
           maxWidth: bottomState == "openMenu" ? "80%" : "75%",
         }}
-        className={`flex-row absolute z-100 border border-gray-500 bottom-20 max-h-[6%] rounded-full gap-2 items-center justify-between p-2 ${colorType !== 1 ? "bg-white/20" : "bg-gray-950/75"} `}
+        className={`flex-row absolute z-100 border border-gray-500 bottom-20 max-h-[7%] rounded-full gap-2 items-center justify-between p-2 ${colorType !== 1 ? "bg-white/20" : "bg-gray-950/75"} `}
       >
         {/* searchbox */}
         <TouchableOpacity
@@ -141,13 +136,12 @@ export default function BottomBar({
               className="text-black text-center h-12"
               style={{ paddingHorizontal: 10 }}
               onFocus={() => {
-                setBottomState("openMenu");
+                bottomState == "normalState"
+                  ? setBottomState("searchState")
+                  : null;
                 setShowTabs(false);
               }}
               onBlur={() => {
-                // if (bottomState == "openMenu") {
-                //   setBottomState("null");
-                // }
                 console.log("Text Input Blurred");
               }}
             />
@@ -159,7 +153,11 @@ export default function BottomBar({
             display: showTabs ? "flex" : "none",
           }}
           className="bg-white/20 border border-gray-400 rounded-full p-2"
-          // onPress={() => console.log("Tab View Pressed")}
+          onPress={() =>
+            bottomState == "tabView"
+              ? setBottomState("normalState")
+              : setBottomState("tabView")
+          }
         >
           {/* HugeiconsIcon */}
           <HugeiconsIcon icon={CreditCardIcon} strokeWidth={2} color={"#ddd"} />
