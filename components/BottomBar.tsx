@@ -10,7 +10,7 @@ import { useRef, useState, useEffect, useContext } from "react";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import { runOnJS } from "react-native-reanimated";
 import { HugeiconsIcon } from "@hugeicons/react-native";
-import { CreditCardIcon } from "@hugeicons/core-free-icons";
+import { CreditCardIcon, CancelCircleIcon } from "@hugeicons/core-free-icons";
 import { animationConfig, BottomBarState } from "@/constants/bottomBar";
 
 import { BrowserContext } from "@/contexts/BrowserContext";
@@ -25,6 +25,7 @@ export default function BottomBar() {
     isEditing,
     setIsEditing,
     isLoading,
+    setPageTitle,
     setIsLoading,
   } = useContext(BrowserContext);
 
@@ -58,6 +59,7 @@ export default function BottomBar() {
     }
 
     setCurrentUrl(url);
+    setPageTitle(inputValue); // Set page title to the input value
     setInputValue(url);
     setIsEditing(false);
     setIsLoading(true);
@@ -193,43 +195,64 @@ export default function BottomBar() {
               if (bottomState == "normalState" || bottomState == "tabView") {
                 setIsEditing(true);
                 searchBoxRef.current?.focus();
+                setPreviousState(bottomState);
+                setBottomState("searchState");
+                setShowTabs(false);
               }
             }}
           >
             {isEditing ? (
-              <TextInput
-                ref={searchBoxRef}
-                editable={bottomState == "minimizedState" ? false : true}
-                disableFullscreenUI={true}
-                placeholder="Search or enter URL"
-                placeholderTextColor="#fff"
-                className="h-12"
-                style={{
-                  paddingHorizontal: 10,
-                  color: "#fff",
-                  textAlign: "center",
-                }}
-                onFocus={() => {
-                  if (
-                    (bottomState == "normalState" ||
-                      bottomState == "tabView") &&
-                    isEditing
-                  ) {
-                    setPreviousState(bottomState);
-                    setBottomState("searchState");
-                    setShowTabs(false);
-                  }
-                }}
-                onBlur={() => {
-                  // console.log("Text Input Blurred");
-                }}
-                value={inputValue}
-                onChangeText={setInputValue}
-                returnKeyType="search"
-                returnKeyLabel="Search"
-                keyboardType="web-search"
-                onSubmitEditing={handleNavigate}
-              />
+              <View
+                style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
+              >
+                <TextInput
+                  ref={searchBoxRef}
+                  editable={bottomState == "minimizedState" ? false : true}
+                  disableFullscreenUI={true}
+                  placeholder="Search or enter URL"
+                  placeholderTextColor="#fff"
+                  className="h-12"
+                  style={{
+                    paddingHorizontal: 10,
+                    color: "#fff",
+                    textAlign: "center",
+                    flex: 1,
+                  }}
+                  onFocus={() => {
+                    if (
+                      bottomState == "normalState" ||
+                      bottomState == "tabView"
+                    ) {
+                      setPreviousState(bottomState);
+                      setBottomState("searchState");
+                      setShowTabs(false);
+                    }
+                  }}
+                  onBlur={() => {
+                    // console.log("Text Input Blurred");
+                  }}
+                  value={inputValue}
+                  onChangeText={setInputValue}
+                  returnKeyType="search"
+                  returnKeyLabel="Search"
+                  keyboardType="web-search"
+                  onSubmitEditing={handleNavigate}
+                />
+                {/* Clear button, only visible when editing and input is not empty */}
+                {inputValue.length > 0 && (
+                  <TouchableOpacity
+                    onPress={() => setInputValue("")}
+                    style={{ paddingHorizontal: 8 }}
+                  >
+                    <HugeiconsIcon
+                      icon={CancelCircleIcon}
+                      size={24}
+                      color="#fff"
+                      strokeWidth={1.5}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
             ) : (
               <View className="h-full w-full flex items-center justify-center">
                 <Text className="text-center text-white">

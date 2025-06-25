@@ -22,7 +22,7 @@ const BrowserProvider = ({ children }) => {
   return (
     <BrowserContext.Provider
       value={{
-        currentUrl,
+        currentUrl, 
         setCurrentUrl,
         inputValue,
         setInputValue,
