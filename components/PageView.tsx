@@ -12,9 +12,14 @@ export default function PageView({ onColorChange }: PageViewProps) {
   const [accentColor, setAccentColor] = React.useState("transparent");
 
   return (
-    <View
-      style={{
+    <ScrollView
+      contentContainerStyle={{
+        flexGrow: 1,
+        paddingTop: 40,
         backgroundColor: accentColor,
+      }}
+      style={{
+        // backgroundColor: accentColor,
         flex: 1,
         position: "absolute",
         overflow: "hidden",
@@ -45,6 +50,6 @@ export default function PageView({ onColorChange }: PageViewProps) {
           }
         }}
       />
-    </View>
+    </ScrollView>
   );
 }

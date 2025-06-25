@@ -7,16 +7,9 @@ import { HugeiconsIcon } from "@hugeicons/react-native";
 import { CreditCardIcon } from "@hugeicons/core-free-icons";
 import { animationConfig, BottomBarState } from "@/constants/bottomBar";
 
-export default function BottomBar({
-  accentColor,
-}: {
-  accentColor: "light-content" | "dark-content" | "default";
-}) {
+export default function BottomBar() {
   // color type constant
   const [colorType, setColorType] = useState(1); // 1 for light, 0 for dark
-  // useEffect(() => {
-  //   setColorType(accentColor === "light-content" ? 1 : 0);
-  // }, [accentColor]);
 
   // bottomBar button states
   const [showTabs, setShowTabs] = useState(true);
@@ -32,9 +25,6 @@ export default function BottomBar({
       runOnJS(setBottomState)("normalState");
       runOnJS(setShowTabs)(true);
     }
-    //  else if (bottomState == "normalState") {
-    // runOnJS(setBottomState)("searchState");
-    // }
   });
   const swipeGesture = Gesture.Pan().onEnd((e) => {
     if (e.velocityY < -200) {
@@ -73,7 +63,6 @@ export default function BottomBar({
         setBottomState("normalState");
         setShowTabs(true);
       }
-      // console.log("Swiped Up on Text Input");
     } else if (e.velocityY > 200) {
       // Swipe down
       if (bottomState === "openMenu") {
