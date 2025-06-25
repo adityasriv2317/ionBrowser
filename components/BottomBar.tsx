@@ -1,13 +1,29 @@
 import { MotiView } from "moti";
 import { TouchableOpacity, TextInput, Keyboard } from "react-native";
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useContext } from "react";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import { runOnJS } from "react-native-reanimated";
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import { CreditCardIcon } from "@hugeicons/core-free-icons";
 import { animationConfig, BottomBarState } from "@/constants/bottomBar";
 
+import { BrowserContext } from "@/contexts/BrowserContext";
+
 export default function BottomBar() {
+  // url
+  const { inputValue, setInputValue, setCurrentUrl } =
+    useContext(BrowserContext);
+
+  const handleNavigate = () => {
+    let url = inputValue.trim();
+    if (!/^https?:\/\//i.test(url) && !url.includes(".")) {
+      url = `https://www.google.com/search?q=${encodeURIComponent(url)}`;
+    } else if (!/^https?:\/\//i.test(url)) {
+      url = `https://${url}`;
+    }
+    setCurrentUrl(url);
+  };
+
   // color type constant
   const [colorType, setColorType] = useState(1); // 1 for light, 0 for dark
 
@@ -63,6 +79,7 @@ export default function BottomBar() {
         setBottomState("normalState");
         setShowTabs(true);
       }
+      // console.log("Swiped Up on Text Input");
     } else if (e.velocityY > 200) {
       // Swipe down
       if (bottomState === "openMenu") {
@@ -142,8 +159,12 @@ export default function BottomBar() {
               disableFullscreenUI={true}
               placeholder="Search or enter URL"
               placeholderTextColor="#fff"
-              className="text-black text-center h-12"
-              style={{ paddingHorizontal: 10 }}
+              className="text-black h-12"
+              style={{
+                paddingHorizontal: 10,
+                color: "#fff",
+                textAlign: "center",
+              }}
               onFocus={() => {
                 if (bottomState == "normalState" || bottomState == "tabView") {
                   setPreviousState(bottomState);
@@ -154,6 +175,12 @@ export default function BottomBar() {
               onBlur={() => {
                 // console.log("Text Input Blurred");
               }}
+              value={inputValue}
+              onChangeText={setInputValue}
+              returnKeyType="search"
+              returnKeyLabel="Search"
+              keyboardType="web-search"
+              onSubmitEditing={handleNavigate}
             />
           </TouchableOpacity>
         </GestureDetector>

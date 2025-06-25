@@ -1,13 +1,14 @@
-import React from "react";
-import { View, Text, ScrollView, Platform, Dimensions } from "react-native";
+import { useContext, useState } from "react";
+import { ScrollView } from "react-native";
 import WebView from "react-native-webview";
-
-import injectedJs from "@/constants/metaInjection";
 import { LinearGradient } from "expo-linear-gradient";
 
+import injectedJs from "@/constants/metaInjection";
+import { BrowserContext } from "@/contexts/BrowserContext";
+
 export default function PageView() {
-  const [accentColor, setAccentColor] = React.useState("transparent");
-  const screenHeight = Dimensions.get("window").height;
+  const [accentColor, setAccentColor] = useState("transparent");
+  const { currentUrl, updateHistory } = useContext(BrowserContext);
 
   return (
     <ScrollView
@@ -32,7 +33,7 @@ export default function PageView() {
         }}
       />
       <WebView
-        source={{ uri: "https://apple.com" }}
+        source={{ uri: currentUrl ? currentUrl : "" }}
         style={{
           flex: 1,
           backgroundColor: "#00000000",
@@ -49,6 +50,9 @@ export default function PageView() {
           setAccentColor(accentColor);
         }}
         scrollEnabled={false}
+        onNavigationStateChange={(navState) => {
+          updateHistory(navState.url);
+        }}
       />
     </ScrollView>
   );

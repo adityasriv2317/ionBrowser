@@ -5,6 +5,7 @@ import { View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "moti";
 
+import BrowserProvider from "@/contexts/BrowserContext";
 import BottomBar from "@/components/BottomBar";
 import PageView from "@/components/PageView";
 
@@ -33,10 +34,12 @@ export default function App() {
       style={{ backgroundColor: "transparent", width: "100%", height: "100%" }}
     >
       <HomeLiquid />
-      <SafeAreaView className="w-full h-full flex items-center justify-center">
-        <PageView />
-        <BottomBar />
-      </SafeAreaView>
+      <BrowserProvider>
+        <SafeAreaView className="w-full h-full flex items-center justify-center">
+          <PageView />
+          <BottomBar />
+        </SafeAreaView>
+      </BrowserProvider>
     </View>
   );
 }
