@@ -1,6 +1,8 @@
 import { View } from "moti";
 import WebView from "react-native-webview";
 
+import url from "@/assets/homePage.html";
+
 export default function HomeLiquid() {
   return (
     <View
@@ -16,7 +18,7 @@ export default function HomeLiquid() {
         javaScriptEnabled={true}
         domStorageEnabled={true}
         scalesPageToFit={true}
-        source={require("@/assets/homePage.html")}
+        source={url}
         style={{
           flex: 1,
           backgroundColor: "#00000000",

@@ -145,15 +145,18 @@ export default function BottomBar() {
         // searchBoxRef.current?.blur();
       } else if (bottomState === "minimizedState") {
         setBottomState("normalState");
+        setIsEditing(false);
         setShowTabs(true);
       } else if (
         bottomState === "searchState" &&
         previousState === "normalState"
       ) {
         setBottomState("normalState");
+        setIsEditing(false);
         setShowTabs(true);
       } else if (bottomState === "searchState" && previousState === "tabView") {
         setBottomState("tabView");
+        setIsEditing(false);
         setShowTabs(true);
       } else {
         setBottomState("minimizedState");
@@ -195,73 +198,69 @@ export default function BottomBar() {
               if (bottomState == "normalState" || bottomState == "tabView") {
                 setIsEditing(true);
                 searchBoxRef.current?.focus();
-                setPreviousState(bottomState);
-                setBottomState("searchState");
-                setShowTabs(false);
               }
             }}
           >
-            {isEditing ? (
-              <View
-                style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
-              >
-                <TextInput
-                  ref={searchBoxRef}
-                  editable={bottomState == "minimizedState" ? false : true}
-                  disableFullscreenUI={true}
-                  placeholder="Search or enter URL"
-                  placeholderTextColor="#fff"
-                  className="h-12"
-                  style={{
-                    paddingHorizontal: 10,
-                    color: "#fff",
-                    textAlign: "center",
-                    flex: 1,
-                  }}
-                  onFocus={() => {
-                    if (
-                      bottomState == "normalState" ||
-                      bottomState == "tabView"
-                    ) {
-                      setPreviousState(bottomState);
-                      setBottomState("searchState");
-                      setShowTabs(false);
-                    }
-                  }}
-                  onBlur={() => {
-                    // console.log("Text Input Blurred");
-                  }}
-                  value={inputValue}
-                  onChangeText={setInputValue}
-                  returnKeyType="search"
-                  returnKeyLabel="Search"
-                  keyboardType="web-search"
-                  onSubmitEditing={handleNavigate}
-                />
-                {/* Clear button, only visible when editing and input is not empty */}
-                {inputValue.length > 0 && (
-                  <TouchableOpacity
-                    onPress={() => setInputValue("")}
-                    style={{ paddingHorizontal: 8 }}
-                  >
-                    <HugeiconsIcon
-                      icon={CancelCircleIcon}
-                      size={24}
-                      color="#fff"
-                      strokeWidth={1.5}
-                    />
-                  </TouchableOpacity>
-                )}
-              </View>
-            ) : (
-              <View className="h-full w-full flex items-center justify-center">
-                <Text className="text-center text-white">
-                  {pageTitle
-                    ? `${pageTitle.slice(0, 30)}`
-                    : "Search or enter URL"}
-                </Text>
-              </View>
-            )}
+            <View
+              style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
+              className={`${isEditing ? "flex" : "hidden"}`}
+            >
+              <TextInput
+                ref={searchBoxRef}
+                editable={bottomState == "minimizedState" ? false : true}
+                disableFullscreenUI={true}
+                placeholder="Search or enter URL"
+                placeholderTextColor="#fff"
+                className="h-12"
+                style={{
+                  paddingHorizontal: 10,
+                  color: "#fff",
+                  textAlign: "center",
+                  flex: 1,
+                }}
+                onFocus={() => {
+                  if (
+                    bottomState == "normalState" ||
+                    bottomState == "tabView"
+                  ) {
+                    setPreviousState(bottomState);
+                    setBottomState("searchState");
+                    setShowTabs(false);
+                  }
+                }}
+                value={inputValue}
+                onChangeText={setInputValue}
+                returnKeyType="search"
+                returnKeyLabel="Search"
+                keyboardType="web-search"
+                onSubmitEditing={handleNavigate}
+              />
+              {/* Clear button, only visible when editing and input is not empty */}
+              {inputValue.length > 0 && (
+                <TouchableOpacity
+                  onPress={() => setInputValue("")}
+                  style={{ paddingHorizontal: 8 }}
+                >
+                  <HugeiconsIcon
+                    icon={CancelCircleIcon}
+                    size={24}
+                    color="#fff"
+                    strokeWidth={1.5}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+
+            <View
+              style={{ display: isEditing ? "none" : "flex" }}
+              className="h-full w-full min-h-12 items-center justify-center"
+            >
+              <Text className="text-center text-white">
+                {pageTitle
+                  ? `${pageTitle.slice(0, 30)}`
+                  : "Search or enter URL"}
+              </Text>
+            </View>
           </TouchableOpacity>
         </GestureDetector>
         {/* tab view button */}
