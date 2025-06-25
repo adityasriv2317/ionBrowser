@@ -8,7 +8,8 @@ import { BrowserContext } from "@/contexts/BrowserContext";
 
 export default function PageView() {
   const [accentColor, setAccentColor] = useState("transparent");
-  const { currentUrl, updateHistory } = useContext(BrowserContext);
+  const { currentUrl, updateHistory, isLoading, setIsLoading } =
+    useContext(BrowserContext);
 
   return (
     <ScrollView
@@ -51,7 +52,19 @@ export default function PageView() {
         }}
         scrollEnabled={false}
         onNavigationStateChange={(navState) => {
-          updateHistory(navState.url);
+          // Only update history if the URL is different and not empty
+          const url =
+            navState.url == "about:blank" ||
+            navState.url == "" ||
+            navState.url == "about:home" ||
+            navState.url == "Webpage not available"
+              ? ""
+              : navState.url;
+          if (!navState.loading && url && url !== currentUrl) {
+            const title = navState.title ? navState.title : "Untitled Page";
+            updateHistory(url, title);
+          }
+          setIsLoading(navState.loading);
         }}
       />
     </ScrollView>

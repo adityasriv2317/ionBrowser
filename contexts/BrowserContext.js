@@ -4,10 +4,19 @@ export const BrowserContext = createContext();
 const BrowserProvider = ({ children }) => {
   const [currentUrl, setCurrentUrl] = useState(null);
   const [inputValue, setInputValue] = useState("");
+  const [pageTitle, setPageTitle] = useState("");
+  const [isEditing, setIsEditing] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const updateHistory = (url) => {
-    setCurrentUrl(url);
-    setInputValue(url); // Sync input with new URL
+  // Only update currentUrl and inputValue if url is different and not empty
+  const updateHistory = (url, title) => {
+    if (url && url !== currentUrl) {
+      setCurrentUrl(url);
+      setInputValue(url); // Sync input with new URL
+    }
+    if (title) {
+      setPageTitle(title); // Update page title if available
+    }
   };
 
   return (
@@ -18,6 +27,12 @@ const BrowserProvider = ({ children }) => {
         inputValue,
         setInputValue,
         updateHistory,
+        pageTitle,
+        setPageTitle,
+        isEditing,
+        setIsEditing,
+        isLoading,
+        setIsLoading,
       }}
     >
       {children}
