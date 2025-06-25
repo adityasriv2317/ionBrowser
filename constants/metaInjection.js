@@ -30,6 +30,10 @@ const injectedJS = `
       window.ReactNativeWebView.postMessage('#3498db');
     }
   })();
+
+  const style = document.createElement('style');
+  style.innerHTML = 'html { padding-bottom: 42px !important; }';
+  document.head.appendChild(style);
   true;
 `;
 

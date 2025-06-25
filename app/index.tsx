@@ -1,7 +1,6 @@
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { View } from "react-native";
-import { accentColor } from "@/constants/types";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "moti";
