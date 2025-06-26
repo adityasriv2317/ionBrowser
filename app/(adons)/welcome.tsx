@@ -3,8 +3,6 @@ import { View, Text, Image, StatusBar, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 
 import { MotiText, MotiView } from "moti";
-import Background from "@/components/SplashBackground";
-
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import {
   ArrowRight01Icon,
@@ -174,7 +172,7 @@ export default function Welcome() {
                 setNext((prev) => prev + 1);
               } else {
                 await AsyncStorage.setItem("welcomeScreenShown", "true");
-                router.push("/");
+                router.replace("/");
                 setNext(0); // Prevents incrementing beyond 3
               }
             }}
