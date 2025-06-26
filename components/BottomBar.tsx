@@ -14,6 +14,7 @@ import { CreditCardIcon, CancelCircleIcon } from "@hugeicons/core-free-icons";
 import { animationConfig, BottomBarState } from "@/constants/bottomBar";
 
 import { BrowserContext } from "@/contexts/BrowserContext";
+import MenuBar from "./MenuBar";
 
 export default function BottomBar() {
   // url
@@ -22,6 +23,7 @@ export default function BottomBar() {
     setInputValue,
     setCurrentUrl,
     pageTitle,
+    currentUrl,
     isEditing,
     setIsEditing,
     isLoading,
@@ -66,10 +68,10 @@ export default function BottomBar() {
   };
 
   // color type constant
-  const [colorType, setColorType] = useState(1); // 1 for light, 0 for dark
+  const [colorType, setColorType] = useState(1);
 
   // bottomBar button states
-  const [showTabs, setShowTabs] = useState(true);
+  const [showTabs, setShowTabs] = useState(currentUrl !== "" ? true : false);
   const searchBoxRef = useRef<TextInput>(null);
   // bottom bar animation states
   const [bottomState, setBottomState] = useState<BottomBarState>("normalState");
@@ -115,10 +117,10 @@ export default function BottomBar() {
       if (bottomState == "normalState") {
         setBottomState("openMenu");
         searchBoxRef.current?.blur();
-        setShowTabs(false);
+        runOnJS(setShowTabs)(false);
       } else if (bottomState == "minimizedState") {
         setBottomState("normalState");
-        setShowTabs(true);
+        runOnJS(setShowTabs)(true);
       }
       // console.log("Swiped Up on Text Input");
     } else if (e.velocityY > 200) {
@@ -126,17 +128,21 @@ export default function BottomBar() {
       if (bottomState === "openMenu") {
         setBottomState("normalState");
         searchBoxRef.current?.blur();
-        setShowTabs(true);
+        runOnJS(setShowTabs)(true);
       } else if (bottomState === "normalState") {
         setBottomState("minimizedState");
         searchBoxRef.current?.blur();
-        setShowTabs(false);
+        runOnJS(setShowTabs)(false);
       }
     }
   });
 
   const gestureCompose = Gesture.Race(tapGesture, swipeGesture);
   const textBoxCompose = Gesture.Race(inputTap, inputSwipe);
+
+  useEffect(() => {
+    setShowTabs(currentUrl !== "" ? false : true);
+  }, [currentUrl, bottomState]);
 
   // detect keyboard visibility
   useEffect(() => {
@@ -184,104 +190,111 @@ export default function BottomBar() {
         style={{
           maxWidth: bottomState == "openMenu" ? "80%" : "75%",
         }}
-        className={`flex-row absolute z-100 border border-gray-500 bottom-20 max-h-[7%] rounded-full gap-2 items-center justify-between p-2 ${colorType !== 1 ? "bg-white/20" : "bg-gray-950/75"} `}
+        className={`absolute z-100 border w-full h-fit max-h-[25%] min-h-[7%] border-gray-500 bottom-20 ${bottomState == "openMenu" ? "rounded-[2rem]" : "rounded-full"} ${colorType !== 1 ? "bg-white/20" : "bg-gray-950/75"} `}
       >
-        {/* searchbox */}
-        <GestureDetector gesture={textBoxCompose}>
+        <View className="flex-row min-h-[7%] w-full gap-2 items-center justify-between p-2">
+          {/* searchbox */}
+          <GestureDetector gesture={textBoxCompose}>
+            <TouchableOpacity
+              className="flex-1 border border-gray-400 bg-white/20 rounded-full"
+              onPress={() => {
+                if (bottomState == "minimizedState") {
+                  setBottomState("normalState");
+                  setShowTabs(true);
+                }
+                if (bottomState == "normalState" || bottomState == "tabView") {
+                  setIsEditing(true);
+                  searchBoxRef.current?.focus();
+                }
+              }}
+            >
+              <View
+                style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
+                className={`${isEditing ? "flex" : "hidden"}`}
+              >
+                <TextInput
+                  ref={searchBoxRef}
+                  editable={bottomState == "minimizedState" ? false : true}
+                  disableFullscreenUI={true}
+                  placeholder="Search or enter URL"
+                  placeholderTextColor="#fff"
+                  className="h-12"
+                  style={{
+                    paddingHorizontal: 10,
+                    color: "#fff",
+                    textAlign: "center",
+                    flex: 1,
+                  }}
+                  onFocus={() => {
+                    if (
+                      bottomState == "normalState" ||
+                      bottomState == "tabView"
+                    ) {
+                      setPreviousState(bottomState);
+                      setBottomState("searchState");
+                      setShowTabs(false);
+                    }
+                  }}
+                  value={inputValue}
+                  onChangeText={setInputValue}
+                  returnKeyType="search"
+                  returnKeyLabel="Search"
+                  keyboardType="web-search"
+                  onSubmitEditing={handleNavigate}
+                />
+                {/* Clear button, only visible when editing and input is not empty */}
+                {inputValue.length > 0 && (
+                  <TouchableOpacity
+                    onPress={() => setInputValue("")}
+                    style={{ paddingHorizontal: 8 }}
+                  >
+                    <HugeiconsIcon
+                      icon={CancelCircleIcon}
+                      size={24}
+                      color="#fff"
+                      strokeWidth={1.5}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
+
+              <View
+                style={{ display: isEditing ? "none" : "flex" }}
+                className="h-full w-full min-h-12 items-center justify-center"
+              >
+                <Text className="text-center text-white">
+                  {pageTitle
+                    ? `${pageTitle.slice(0, 30)}`
+                    : "Search or enter URL"}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </GestureDetector>
+          {/* tab view button */}
           <TouchableOpacity
-            className="flex-1 border border-gray-400 bg-white/20 rounded-full"
+            style={{
+              display: showTabs ? "flex" : "none",
+            }}
+            className="bg-white/20 border border-gray-400 rounded-full p-2"
             onPress={() => {
-              if (bottomState == "minimizedState") {
+              if (bottomState == "tabView") {
+                setPreviousState(bottomState);
                 setBottomState("normalState");
-                setShowTabs(true);
-              }
-              if (bottomState == "normalState" || bottomState == "tabView") {
-                setIsEditing(true);
-                searchBoxRef.current?.focus();
+              } else {
+                setPreviousState(bottomState);
+                setBottomState("tabView");
               }
             }}
           >
-            <View
-              style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
-              className={`${isEditing ? "flex" : "hidden"}`}
-            >
-              <TextInput
-                ref={searchBoxRef}
-                editable={bottomState == "minimizedState" ? false : true}
-                disableFullscreenUI={true}
-                placeholder="Search or enter URL"
-                placeholderTextColor="#fff"
-                className="h-12"
-                style={{
-                  paddingHorizontal: 10,
-                  color: "#fff",
-                  textAlign: "center",
-                  flex: 1,
-                }}
-                onFocus={() => {
-                  if (
-                    bottomState == "normalState" ||
-                    bottomState == "tabView"
-                  ) {
-                    setPreviousState(bottomState);
-                    setBottomState("searchState");
-                    setShowTabs(false);
-                  }
-                }}
-                value={inputValue}
-                onChangeText={setInputValue}
-                returnKeyType="search"
-                returnKeyLabel="Search"
-                keyboardType="web-search"
-                onSubmitEditing={handleNavigate}
-              />
-              {/* Clear button, only visible when editing and input is not empty */}
-              {inputValue.length > 0 && (
-                <TouchableOpacity
-                  onPress={() => setInputValue("")}
-                  style={{ paddingHorizontal: 8 }}
-                >
-                  <HugeiconsIcon
-                    icon={CancelCircleIcon}
-                    size={24}
-                    color="#fff"
-                    strokeWidth={1.5}
-                  />
-                </TouchableOpacity>
-              )}
-            </View>
-
-            <View
-              style={{ display: isEditing ? "none" : "flex" }}
-              className="h-full w-full min-h-12 items-center justify-center"
-            >
-              <Text className="text-center text-white">
-                {pageTitle
-                  ? `${pageTitle.slice(0, 30)}`
-                  : "Search or enter URL"}
-              </Text>
-            </View>
+            {/* HugeiconsIcon */}
+            <HugeiconsIcon
+              icon={CreditCardIcon}
+              strokeWidth={2}
+              color={"#ddd"}
+            />
           </TouchableOpacity>
-        </GestureDetector>
-        {/* tab view button */}
-        <TouchableOpacity
-          style={{
-            display: showTabs ? "flex" : "none",
-          }}
-          className="bg-white/20 border border-gray-400 rounded-full p-2"
-          onPress={() => {
-            if (bottomState == "tabView") {
-              setPreviousState(bottomState);
-              setBottomState("normalState");
-            } else {
-              setPreviousState(bottomState);
-              setBottomState("tabView");
-            }
-          }}
-        >
-          {/* HugeiconsIcon */}
-          <HugeiconsIcon icon={CreditCardIcon} strokeWidth={2} color={"#ddd"} />
-        </TouchableOpacity>
+        </View>
+        {bottomState === "openMenu" && <MenuBar />}
       </MotiView>
     </GestureDetector>
   );

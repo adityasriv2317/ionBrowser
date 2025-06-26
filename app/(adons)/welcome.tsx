@@ -2,9 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Image, StatusBar, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 
-import { MotiText, MotiView } from "moti";
-import Background from "@/components/SplashBackground";
-
+import { MotiText, MotiView, SafeAreaView } from "moti";
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import {
   ArrowRight01Icon,
@@ -34,7 +32,7 @@ export default function Welcome() {
   }, [router]);
 
   return (
-    <View className="flex-1 inset-0 bg-black">
+    <SafeAreaView className="flex-1 inset-0 bg-black">
       <StatusBar barStyle="light-content" />
 
       {/* background */}
@@ -174,7 +172,7 @@ export default function Welcome() {
                 setNext((prev) => prev + 1);
               } else {
                 await AsyncStorage.setItem("welcomeScreenShown", "true");
-                router.push("/");
+                router.replace("/");
                 setNext(0); // Prevents incrementing beyond 3
               }
             }}
@@ -206,6 +204,6 @@ export default function Welcome() {
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }

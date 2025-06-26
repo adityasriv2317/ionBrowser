@@ -9,7 +9,7 @@ export const animationConfig = {
     opacity: 0.8,
   },
   openMenu: {
-    translateY: -350,
+    // translateY: -350,
     opacity: 1,
     scale: 1.2,
   },
