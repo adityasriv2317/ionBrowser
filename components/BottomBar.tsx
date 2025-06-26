@@ -71,7 +71,7 @@ export default function BottomBar() {
   const [colorType, setColorType] = useState(1);
 
   // bottomBar button states
-  const [showTabs, setShowTabs] = useState(currentUrl !== "" ? true : false);
+  const [showTabs, setShowTabs] = useState(true);
   const searchBoxRef = useRef<TextInput>(null);
   // bottom bar animation states
   const [bottomState, setBottomState] = useState<BottomBarState>("normalState");
@@ -139,10 +139,6 @@ export default function BottomBar() {
 
   const gestureCompose = Gesture.Race(tapGesture, swipeGesture);
   const textBoxCompose = Gesture.Race(inputTap, inputSwipe);
-
-  useEffect(() => {
-    setShowTabs(currentUrl !== "" ? false : true);
-  }, [currentUrl, bottomState]);
 
   // detect keyboard visibility
   useEffect(() => {
