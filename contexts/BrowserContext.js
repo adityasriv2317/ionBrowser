@@ -5,7 +5,7 @@ const BrowserProvider = ({ children }) => {
   const [currentUrl, setCurrentUrl] = useState(null);
   const [inputValue, setInputValue] = useState("");
   const [pageTitle, setPageTitle] = useState("");
-  const [isEditing, setIsEditing] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   // Only update currentUrl and inputValue if url is different and not empty
