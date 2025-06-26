@@ -174,6 +174,16 @@ export default function BottomBar() {
       handleKeyboardHide
     );
 
+    // const enterpressListener = Keyboard.addListener(
+    //   "keyboardDidPressEnter",
+    //   () => {
+    //     if (bottomState === "searchState" && previousState === "openMenu") {
+    //       setIsEditing(false);
+    //       setBottomState(previousState);
+    //     }
+    //   }
+    // );
+
     return () => {
       // keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
@@ -253,7 +263,16 @@ export default function BottomBar() {
                 returnKeyType="search"
                 returnKeyLabel="Search"
                 keyboardType="web-search"
-                onSubmitEditing={handleNavigate}
+                onSubmitEditing={() => {
+                  if (
+                    bottomState === "searchState" &&
+                    previousState === "openMenu"
+                  ) {
+                    setIsEditing(false);
+                    setBottomState(previousState);
+                  }
+                  handleNavigate();
+                }}
               />
               {/* Clear button, only visible when editing and input is not empty */}
               {inputValue.length > 0 && (
