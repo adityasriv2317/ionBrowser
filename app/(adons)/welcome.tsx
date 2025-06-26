@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Image, StatusBar, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 
@@ -21,6 +21,17 @@ export default function Welcome() {
   const [next, setNext] = useState(0);
 
   const [pressed, setPressed] = useState(false);
+
+  useEffect(() => {
+    const checkWelcomeScreen = async () => {
+      const welcomeScreenShown =
+        await AsyncStorage.getItem("welcomeScreenShown");
+      if (welcomeScreenShown === "true") {
+        router.replace("/");
+      }
+    };
+    checkWelcomeScreen();
+  }, [router]);
 
   return (
     <View className="flex-1 inset-0 bg-black">
