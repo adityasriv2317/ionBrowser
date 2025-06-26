@@ -1,22 +1,72 @@
 import { MotiView } from "moti";
-import { TouchableOpacity, TextInput, Keyboard } from "react-native";
-import { useRef, useState, useEffect } from "react";
+import {
+  TouchableOpacity,
+  TextInput,
+  Keyboard,
+  Text,
+  View,
+} from "react-native";
+import { useRef, useState, useEffect, useContext } from "react";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import { runOnJS } from "react-native-reanimated";
 import { HugeiconsIcon } from "@hugeicons/react-native";
-import { CreditCardIcon } from "@hugeicons/core-free-icons";
+import { CreditCardIcon, CancelCircleIcon } from "@hugeicons/core-free-icons";
 import { animationConfig, BottomBarState } from "@/constants/bottomBar";
 
-export default function BottomBar({
-  accentColor,
-}: {
-  accentColor: "light-content" | "dark-content" | "default";
-}) {
+import { BrowserContext } from "@/contexts/BrowserContext";
+
+export default function BottomBar() {
+  // url
+  const {
+    inputValue,
+    setInputValue,
+    setCurrentUrl,
+    pageTitle,
+    isEditing,
+    setIsEditing,
+    isLoading,
+    setPageTitle,
+    setIsLoading,
+  } = useContext(BrowserContext);
+
+  const handleNavigate = () => {
+    if (isLoading) {
+      return;
+    }
+
+    let input = inputValue.trim();
+
+    // If user entered something like "example", treat it as a search
+    const isLikelySearch = !input.includes(".") && !input.startsWith("http");
+    let url = "";
+
+    if (isLikelySearch) {
+      // Google search
+      url = `https://www.google.com/search?q=${encodeURIComponent(input)}`;
+    } else {
+      // Make sure it starts with http/https
+      if (!/^https?:\/\//i.test(input)) {
+        input = `https://${input}`;
+      }
+
+      try {
+        const validUrl = new URL(input);
+        url = validUrl.href;
+      } catch (error) {
+        // If URL constructor throws, fallback to search
+        url = `https://www.google.com/search?q=${encodeURIComponent(inputValue)}`;
+      }
+    }
+
+    setCurrentUrl(url);
+    setPageTitle(inputValue); // Set page title to the input value
+    setInputValue(url);
+    setIsEditing(false);
+    setIsLoading(true);
+  };
+
   // color type constant
   const [colorType, setColorType] = useState(1); // 1 for light, 0 for dark
-  // useEffect(() => {
-  //   setColorType(accentColor === "light-content" ? 1 : 0);
-  // }, [accentColor]);
 
   // bottomBar button states
   const [showTabs, setShowTabs] = useState(true);
@@ -25,14 +75,12 @@ export default function BottomBar({
   const [bottomState, setBottomState] = useState<BottomBarState>("normalState");
   const [previousState, setPreviousState] =
     useState<BottomBarState>(bottomState);
+
   // bottom bar gesturs
   const tapGesture = Gesture.Tap().onEnd(() => {
     if (bottomState == "minimizedState") {
       runOnJS(setBottomState)("normalState");
-      // console.log("Search Box Pressed");
       runOnJS(setShowTabs)(true);
-    } else if (bottomState == "normalState") {
-      runOnJS(setBottomState)("searchState");
     }
   });
   const swipeGesture = Gesture.Pan().onEnd((e) => {
@@ -97,15 +145,18 @@ export default function BottomBar({
         // searchBoxRef.current?.blur();
       } else if (bottomState === "minimizedState") {
         setBottomState("normalState");
+        setIsEditing(false);
         setShowTabs(true);
       } else if (
         bottomState === "searchState" &&
         previousState === "normalState"
       ) {
-        setBottomState("normalState")
+        setBottomState("normalState");
+        setIsEditing(false);
         setShowTabs(true);
       } else if (bottomState === "searchState" && previousState === "tabView") {
         setBottomState("tabView");
+        setIsEditing(false);
         setShowTabs(true);
       } else {
         setBottomState("minimizedState");
@@ -144,27 +195,72 @@ export default function BottomBar({
                 setBottomState("normalState");
                 setShowTabs(true);
               }
+              if (bottomState == "normalState" || bottomState == "tabView") {
+                setIsEditing(true);
+                searchBoxRef.current?.focus();
+              }
             }}
           >
-            <TextInput
-              ref={searchBoxRef}
-              editable={bottomState == "minimizedState" ? false : true}
-              disableFullscreenUI={true}
-              placeholder="Search or enter URL"
-              placeholderTextColor="#fff"
-              className="text-black text-center h-12"
-              style={{ paddingHorizontal: 10 }}
-              onFocus={() => {
-                if (bottomState == "normalState" || bottomState == "tabView") {
-                  setPreviousState(bottomState);
-                  setBottomState("searchState");
-                  setShowTabs(false);
-                }
-              }}
-              onBlur={() => {
-                // console.log("Text Input Blurred");
-              }}
-            />
+            <View
+              style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
+              className={`${isEditing ? "flex" : "hidden"}`}
+            >
+              <TextInput
+                ref={searchBoxRef}
+                editable={bottomState == "minimizedState" ? false : true}
+                disableFullscreenUI={true}
+                placeholder="Search or enter URL"
+                placeholderTextColor="#fff"
+                className="h-12"
+                style={{
+                  paddingHorizontal: 10,
+                  color: "#fff",
+                  textAlign: "center",
+                  flex: 1,
+                }}
+                onFocus={() => {
+                  if (
+                    bottomState == "normalState" ||
+                    bottomState == "tabView"
+                  ) {
+                    setPreviousState(bottomState);
+                    setBottomState("searchState");
+                    setShowTabs(false);
+                  }
+                }}
+                value={inputValue}
+                onChangeText={setInputValue}
+                returnKeyType="search"
+                returnKeyLabel="Search"
+                keyboardType="web-search"
+                onSubmitEditing={handleNavigate}
+              />
+              {/* Clear button, only visible when editing and input is not empty */}
+              {inputValue.length > 0 && (
+                <TouchableOpacity
+                  onPress={() => setInputValue("")}
+                  style={{ paddingHorizontal: 8 }}
+                >
+                  <HugeiconsIcon
+                    icon={CancelCircleIcon}
+                    size={24}
+                    color="#fff"
+                    strokeWidth={1.5}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+
+            <View
+              style={{ display: isEditing ? "none" : "flex" }}
+              className="h-full w-full min-h-12 items-center justify-center"
+            >
+              <Text className="text-center text-white">
+                {pageTitle
+                  ? `${pageTitle.slice(0, 30)}`
+                  : "Search or enter URL"}
+              </Text>
+            </View>
           </TouchableOpacity>
         </GestureDetector>
         {/* tab view button */}

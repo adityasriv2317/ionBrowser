@@ -1,3 +1,4 @@
+// This file contains the animation configurations for the bottom bar in the IonBrowser app.
 export const animationConfig = {
   tabView: {
     scale: 1.1,
@@ -36,4 +37,3 @@ export type BottomBarState =
   | "begin" // animation start state
   | "tabView" // show tabs manager
   | "searchState"; // url bar is focused for searching
-// This file contains the animation configurations for the bottom bar in the IonBrowser app.

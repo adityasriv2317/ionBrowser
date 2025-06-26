@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Image, StatusBar, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 
@@ -13,6 +13,7 @@ import {
   ZapIcon,
 } from "@hugeicons/core-free-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import HomeLiquid from "./HomeLiquid";
 
 export default function Welcome() {
   const router = useRouter();
@@ -21,12 +22,24 @@ export default function Welcome() {
 
   const [pressed, setPressed] = useState(false);
 
+  useEffect(() => {
+    const checkWelcomeScreen = async () => {
+      const welcomeScreenShown =
+        await AsyncStorage.getItem("welcomeScreenShown");
+      if (welcomeScreenShown === "true") {
+        router.replace("/");
+      }
+    };
+    checkWelcomeScreen();
+  }, [router]);
+
   return (
     <View className="flex-1 inset-0 bg-black">
       <StatusBar barStyle="light-content" />
 
       {/* background */}
-      <Background />
+      {/* <Background /> */}
+      <HomeLiquid />
 
       <View className="flex-1 items-center justify-between pt-10 pb-0">
         {/* icon and text */}
@@ -161,7 +174,7 @@ export default function Welcome() {
                 setNext((prev) => prev + 1);
               } else {
                 await AsyncStorage.setItem("welcomeScreenShown", "true");
-                router.replace("/");
+                router.push("/");
                 setNext(0); // Prevents incrementing beyond 3
               }
             }}
