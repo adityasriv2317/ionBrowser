@@ -21,7 +21,7 @@ export default function App() {
       const welcomeScreenShown =
         await AsyncStorage.getItem("welcomeScreenShown");
       if (welcomeScreenShown === null) {
-        router.replace("/Welcome");
+        router.replace("/welcome");
       } else {
         setLoading(false);
       }

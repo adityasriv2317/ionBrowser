@@ -20,23 +20,9 @@ export default function Welcome() {
 
   const [pressed, setPressed] = useState(false);
 
-  useEffect(() => {
-    const checkWelcomeScreen = async () => {
-      const welcomeScreenShown =
-        await AsyncStorage.getItem("welcomeScreenShown");
-      if (welcomeScreenShown === "true") {
-        router.replace("/");
-      }
-    };
-    checkWelcomeScreen();
-  }, [router]);
-
   return (
     <SafeAreaView className="flex-1 inset-0 bg-black">
-      <StatusBar barStyle="light-content" />
-
       {/* background */}
-      {/* <Background /> */}
       <HomeLiquid />
 
       <View className="flex-1 items-center justify-between pt-10 pb-0">
