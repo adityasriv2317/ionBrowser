@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, Image, StatusBar, TouchableOpacity } from "react-native";
 import { useRouter } from "expo-router";
 
-import { MotiText, MotiView } from "moti";
+import { MotiText, MotiView, SafeAreaView } from "moti";
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import {
   ArrowRight01Icon,
@@ -32,7 +32,7 @@ export default function Welcome() {
   }, [router]);
 
   return (
-    <View className="flex-1 inset-0 bg-black">
+    <SafeAreaView className="flex-1 inset-0 bg-black">
       <StatusBar barStyle="light-content" />
 
       {/* background */}
@@ -204,6 +204,6 @@ export default function Welcome() {
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
