@@ -28,8 +28,9 @@ export default function PageView() {
           refreshing={refreshing}
           onRefresh={onRefresh}
           enabled={atTop}
-          colors={["#a34f27", "#e81427", "#e81c52", "#e8b827"]}
-          // tintColor="#e8b827"
+          colors={["#a34f27", "#e8b827", "#e81427"]}
+          progressBackgroundColor={accentColor}
+          progressViewOffset={21} // Adjusted to match the height of the gradient
         />
       }
     >
@@ -49,9 +50,9 @@ export default function PageView() {
         source={{ uri: currentUrl || "" }}
         style={{
           flex: 1,
-          backgroundColor: accentColor, // Uncomment if you want to use accentColor as background
-          minHeight: 875, // Adjusted for better visibility
-          minWidth: 412, // Adjusted for better visibility
+          backgroundColor: accentColor,
+          minHeight: 875,
+          minWidth: 412,
           height: "100%",
           width: "100%",
         }}
@@ -63,14 +64,12 @@ export default function PageView() {
         scalesPageToFit
         scrollEnabled={true}
         onMessage={(event) => {
-          // setAccentColor(event.nativeEvent.data);
           try {
             const data = JSON.parse(event.nativeEvent.data);
             if (typeof data.scrollTop === "number") {
               setAtTop(data.scrollTop <= 0);
             }
           } catch {
-            // setAccentColor(event.nativeEvent.data);
           } finally {
             setAccentColor(event.nativeEvent.data);
           }
