@@ -107,34 +107,8 @@ export default function BottomBar() {
     }
   });
 
-  // text input gestures
-  const inputTap = Gesture.Tap().onEnd(() => {
-    // console.log("Text Input Tapped");
-  });
-  const inputSwipe = Gesture.Pan().onEnd((e) => {
-    if (e.velocityY < -100) {
-      // Swipe up
-      if (bottomState == "minimizedState") {
-        runOnJS(setShowTabs)(true);
-        runOnJS(setBottomState)("normalState");
-      } else if (bottomState == "normalState") {
-        runOnJS(setShowTabs)(false);
-        runOnJS(setBottomState)("openMenu");
-      }
-    } else if (e.velocityY > 100) {
-      // Swipe down
-      if (bottomState == "openMenu") {
-        runOnJS(setShowTabs)(true);
-        runOnJS(setBottomState)("normalState");
-      } else {
-        runOnJS(setShowTabs)(false);
-        runOnJS(setBottomState)("minimizedState");
-      }
-    }
-  });
-
   const gestureCompose = Gesture.Race(tapGesture, swipeGesture);
-  const textBoxCompose = Gesture.Race(inputTap, inputSwipe);
+  const textBoxCompose = Gesture.Race(swipeGesture);
 
   // detect keyboard visibility
   useEffect(() => {
@@ -160,8 +134,8 @@ export default function BottomBar() {
         bottomState === "searchState" &&
         previousState === "openMenu"
       ) {
-        setBottomState("openMenu");
         setIsEditing(false);
+        setBottomState("openMenu");
       } else {
         setBottomState("minimizedState");
         setShowTabs(false);
@@ -218,12 +192,11 @@ export default function BottomBar() {
                 bottomState == "normalState" ||
                 bottomState == "tabView"
               ) {
-                searchBoxRef.current?.focus();
                 setIsEditing(true);
+                searchBoxRef.current?.focus();
               } else if (bottomState == "openMenu") {
-                console.log("Open Menu Clicked");
-                searchBoxRef.current?.focus();
                 setIsEditing(true);
+                searchBoxRef.current?.focus();
                 setPreviousState(bottomState);
                 setBottomState("searchState");
               }
@@ -235,7 +208,6 @@ export default function BottomBar() {
             >
               <TextInput
                 ref={searchBoxRef}
-                editable={bottomState == "minimizedState" ? false : true}
                 disableFullscreenUI={true}
                 placeholder="Search or enter URL"
                 placeholderTextColor="#fff"
@@ -253,7 +225,6 @@ export default function BottomBar() {
                     bottomState == "searchState"
                   ) {
                     setPreviousState(bottomState);
-                    console.log(previousState, "STATE CHANGE");
                     setBottomState("searchState");
                     setShowTabs(false);
                   }
@@ -264,12 +235,13 @@ export default function BottomBar() {
                 returnKeyLabel="Search"
                 keyboardType="web-search"
                 onSubmitEditing={() => {
+                  // if url is changed, navigate
                   if (
-                    bottomState === "searchState" &&
-                    previousState === "openMenu"
+                    inputValue !== currentUrl &&
+                    previousState == "openMenu"
                   ) {
-                    setIsEditing(false);
-                    setBottomState(previousState);
+                    setBottomState("normalState");
+                    setShowTabs(true);
                   }
                   handleNavigate();
                 }}
