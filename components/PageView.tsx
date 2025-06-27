@@ -16,7 +16,7 @@ export default function PageView() {
   const onRefresh = useCallback(() => {
     if (!atTop) return;
     setRefreshing(true);
-    // setTimeout(() => setRefreshing(false), 1000);
+    // setTimeout(() => setRefreshing(false), 20000);
   }, [atTop]);
 
   return (
@@ -27,7 +27,9 @@ export default function PageView() {
         <RefreshControl
           refreshing={refreshing}
           onRefresh={onRefresh}
-          tintColor="#888"
+          enabled={atTop}
+          colors={["#a34f27", "#e81427", "#e81c52", "#e8b827"]}
+          // tintColor="#e8b827"
         />
       }
     >
@@ -57,6 +59,7 @@ export default function PageView() {
         javaScriptEnabled
         domStorageEnabled
         startInLoadingState
+        onLoad={() => setRefreshing(false)}
         scalesPageToFit
         scrollEnabled={true}
         onMessage={(event) => {
