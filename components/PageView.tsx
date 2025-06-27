@@ -11,10 +11,13 @@ export default function PageView() {
   const { currentUrl, updateHistory, isLoading, setIsLoading } =
     useContext(BrowserContext);
 
+  const [atTop, setAtTop] = useState(true);
+
   const onRefresh = useCallback(() => {
+    if (!atTop) return;
     setRefreshing(true);
-    setTimeout(() => setRefreshing(false), 1000); // Graceful wait
-  }, []);
+    // setTimeout(() => setRefreshing(false), 1000);
+  }, [atTop]);
 
   return (
     <ScrollView
@@ -44,6 +47,7 @@ export default function PageView() {
         source={{ uri: currentUrl || "" }}
         style={{
           flex: 1,
+          backgroundColor: accentColor, // Uncomment if you want to use accentColor as background
           minHeight: 875, // Adjusted for better visibility
           minWidth: 412, // Adjusted for better visibility
           height: "100%",
@@ -55,7 +59,19 @@ export default function PageView() {
         startInLoadingState
         scalesPageToFit
         scrollEnabled={true}
-        onMessage={(event) => setAccentColor(event.nativeEvent.data)}
+        onMessage={(event) => {
+          // setAccentColor(event.nativeEvent.data);
+          try {
+            const data = JSON.parse(event.nativeEvent.data);
+            if (typeof data.scrollTop === "number") {
+              setAtTop(data.scrollTop <= 0);
+            }
+          } catch {
+            // setAccentColor(event.nativeEvent.data);
+          } finally {
+            setAccentColor(event.nativeEvent.data);
+          }
+        }}
         onNavigationStateChange={(navState) => {
           const url = [
             "about:blank",
