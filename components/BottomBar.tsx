@@ -107,8 +107,30 @@ export default function BottomBar() {
     }
   });
 
+  const textSwipe = Gesture.Pan().onEnd((e) => {
+    if (e.velocityY < -100) {
+      // Swipe up
+      if (bottomState == "minimizedState") {
+        runOnJS(setShowTabs)(true);
+        runOnJS(setBottomState)("normalState");
+      } else if (bottomState == "normalState") {
+        runOnJS(setShowTabs)(false);
+        runOnJS(setBottomState)("openMenu");
+      }
+    } else if (e.velocityY > 100) {
+      // Swipe down
+      if (bottomState == "openMenu") {
+        runOnJS(setShowTabs)(true);
+        runOnJS(setBottomState)("normalState");
+      } else {
+        runOnJS(setShowTabs)(false);
+        runOnJS(setBottomState)("minimizedState");
+      }
+    }
+  });
+
   const gestureCompose = Gesture.Race(tapGesture, swipeGesture);
-  const textBoxCompose = Gesture.Race(swipeGesture);
+  const textBoxCompose = Gesture.Race(textSwipe);
 
   // detect keyboard visibility
   useEffect(() => {
@@ -210,6 +232,7 @@ export default function BottomBar() {
                 ref={searchBoxRef}
                 disableFullscreenUI={true}
                 placeholder="Search or enter URL"
+                editable={bottomState == "minimizedState" ? false : true}
                 placeholderTextColor="#fff"
                 className="h-12"
                 style={{
