@@ -7,6 +7,7 @@ const BrowserProvider = ({ children }) => {
   const [pageTitle, setPageTitle] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [accentColor, setAccent] = useState("default"); // Default accent color
 
   // Only update currentUrl and inputValue if url is different and not empty
   const updateHistory = (url, title) => {
@@ -22,13 +23,15 @@ const BrowserProvider = ({ children }) => {
   return (
     <BrowserContext.Provider
       value={{
-        currentUrl, 
+        currentUrl,
         setCurrentUrl,
         inputValue,
         setInputValue,
         updateHistory,
         pageTitle,
         setPageTitle,
+        accentColor,
+        setAccent,
         isEditing,
         setIsEditing,
         isLoading,
