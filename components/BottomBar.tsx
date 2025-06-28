@@ -1,20 +1,16 @@
-import { MotiView } from "moti";
-import {
-  TouchableOpacity,
-  TextInput,
-  Keyboard,
-  Text,
-  View,
-} from "react-native";
+import { MotiView, View } from "moti";
+import { TouchableOpacity, TextInput, Keyboard, Text } from "react-native";
 import { useRef, useState, useEffect, useContext } from "react";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import { runOnJS } from "react-native-reanimated";
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import { CreditCardIcon, CancelCircleIcon } from "@hugeicons/core-free-icons";
 import { animationConfig, BottomBarState } from "@/constants/bottomBar";
+import { BlurView } from "expo-blur";
 
 import { BrowserContext } from "@/contexts/BrowserContext";
 import MenuBar from "./MenuBar";
+import LGCard from "./LGCard";
 
 export default function BottomBar() {
   // url
@@ -86,7 +82,7 @@ export default function BottomBar() {
     }
   });
   const swipeGesture = Gesture.Pan().onEnd((e) => {
-    if (e.velocityY < -200) {
+    if (e.velocityY < -50) {
       // Swipe up
       if (bottomState == "minimizedState") {
         runOnJS(setShowTabs)(true);
@@ -95,7 +91,7 @@ export default function BottomBar() {
         runOnJS(setShowTabs)(false);
         runOnJS(setBottomState)("openMenu");
       }
-    } else if (e.velocityY > 200) {
+    } else if (e.velocityY > 50) {
       // Swipe down
       if (bottomState == "openMenu") {
         runOnJS(setShowTabs)(true);
@@ -107,8 +103,17 @@ export default function BottomBar() {
     }
   });
 
+  const textTouch = Gesture.Tap().onEnd(() => {
+    if (bottomState == "minimizedState") {
+      runOnJS(setIsEditing)(false);
+      runOnJS(setBottomState)("normalState");
+      runOnJS(setShowTabs)(true);
+    } else if (bottomState == "normalState" || bottomState == "tabView") {
+      runOnJS(setIsEditing)(true);
+    }
+  });
   const textSwipe = Gesture.Pan().onEnd((e) => {
-    if (e.velocityY < -100) {
+    if (e.velocityY < -50) {
       // Swipe up
       if (bottomState == "minimizedState") {
         runOnJS(setShowTabs)(true);
@@ -117,7 +122,7 @@ export default function BottomBar() {
         runOnJS(setShowTabs)(false);
         runOnJS(setBottomState)("openMenu");
       }
-    } else if (e.velocityY > 100) {
+    } else if (e.velocityY > 50) {
       // Swipe down
       if (bottomState == "openMenu") {
         runOnJS(setShowTabs)(true);
@@ -130,7 +135,7 @@ export default function BottomBar() {
   });
 
   const gestureCompose = Gesture.Race(tapGesture, swipeGesture);
-  const textBoxCompose = Gesture.Race(textSwipe);
+  const textBoxCompose = Gesture.Race(textTouch, textSwipe);
 
   // detect keyboard visibility
   useEffect(() => {
@@ -170,16 +175,6 @@ export default function BottomBar() {
       handleKeyboardHide
     );
 
-    // const enterpressListener = Keyboard.addListener(
-    //   "keyboardDidPressEnter",
-    //   () => {
-    //     if (bottomState === "searchState" && previousState === "openMenu") {
-    //       setIsEditing(false);
-    //       setBottomState(previousState);
-    //     }
-    //   }
-    // );
-
     return () => {
       // keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
@@ -194,8 +189,12 @@ export default function BottomBar() {
         style={{
           maxWidth: bottomState == "openMenu" ? "80%" : "75%",
         }}
-        className={`absolute z-100 border w-full h-fit max-h-[25%] min-h-[7%] border-gray-500 bottom-20 ${bottomState == "openMenu" ? "rounded-[2rem]" : "rounded-full"} ${colorType !== 1 ? "bg-white/20" : "bg-gray-950/75"} `}
+        className={`absolute z-100 w-full h-fit max-h-[25%] min-h-[7%] ${bottomState == "openMenu" ? "rounded-[2rem]" : "rounded-full"} border-gray-500 bottom-20 ${bottomState == "openMenu" ? "bg-black/50" : "bg-transparent"} `}
       >
+        {/* <LGCard
+          className={`${bottomState == "openMenu" ? "rounded-[2rem]" : "rounded-full"}`}
+        > */}
+
         <View
           style={{
             maxHeight: bottomState == "openMenu" ? "25%" : "100%",
@@ -205,10 +204,12 @@ export default function BottomBar() {
           {/* searchbox */}
 
           <TouchableOpacity
-            className="flex-1 border border-gray-400 bg-white/20 rounded-full"
+            // className="flex-1 border border-gray-400 bg-white/20 rounded-full"
+            className={`flex-1 border rounded-full ${colorType == 1 ? "bg-black/40 border-gray-800" : "bg-black/20 border-gray-400"}`}
             onPress={() => {
               if (bottomState == "minimizedState") {
                 setBottomState("normalState");
+                setIsEditing(false);
                 setShowTabs(true);
               } else if (
                 bottomState == "normalState" ||
@@ -224,8 +225,23 @@ export default function BottomBar() {
               }
             }}
           >
+            {/* <BlurView
+              intensity={100}
+              style={{
+                flex: 1,
+                borderRadius: 9999,
+                backdropFilter: "blur(10px)",
+                overflow: "hidden",
+              }}
+              className="h-full"
+              // tint="light"
+            > */}
             <View
-              style={{ flexDirection: "row", alignItems: "center", flex: 1 }}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                flex: 1,
+              }}
               className={`${isEditing ? "flex" : "hidden"}`}
             >
               <TextInput
@@ -288,7 +304,7 @@ export default function BottomBar() {
             <GestureDetector gesture={textBoxCompose}>
               <View
                 style={{ display: isEditing ? "none" : "flex" }}
-                className="h-full w-full min-h-12 items-center justify-center"
+                className="h-10 w-full min-h-12 items-center justify-center"
               >
                 <Text className="text-center text-white">
                   {pageTitle
@@ -297,13 +313,15 @@ export default function BottomBar() {
                 </Text>
               </View>
             </GestureDetector>
+            {/* </BlurView> */}
           </TouchableOpacity>
           {/* tab view button */}
           <TouchableOpacity
             style={{
               display: showTabs ? "flex" : "none",
             }}
-            className="bg-white/20 border border-gray-400 rounded-full p-2"
+            // className="bg-white/20 border border-gray-400 rounded-full p-2"
+            className={`border rounded-full p-2 ${colorType == 1 ? "bg-black/40 border-gray-800" : "bg-black/20 border-gray-400"}`}
             onPress={() => {
               if (bottomState == "tabView") {
                 setPreviousState(bottomState);
@@ -323,6 +341,7 @@ export default function BottomBar() {
           </TouchableOpacity>
         </View>
         {bottomState === "openMenu" && <MenuBar />}
+        {/* </LGCard> */}
       </MotiView>
     </GestureDetector>
   );
