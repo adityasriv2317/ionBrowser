@@ -4,11 +4,12 @@ import WebView from "react-native-webview";
 import { LinearGradient } from "expo-linear-gradient";
 import injectedJs from "@/constants/metaInjection";
 import { BrowserContext } from "@/contexts/BrowserContext";
+import { colorCompare } from "@/constants/windowColors";
 
 export default function PageView() {
   const [accentColor, setAccentColor] = useState("transparent");
   const [refreshing, setRefreshing] = useState(false);
-  const { currentUrl, updateHistory, isLoading, setIsLoading } =
+  const { currentUrl, updateHistory, isLoading, setIsLoading, setAccent } =
     useContext(BrowserContext);
 
   const [atTop, setAtTop] = useState(true);
@@ -72,6 +73,7 @@ export default function PageView() {
           } catch {
           } finally {
             setAccentColor(event.nativeEvent.data);
+            colorCompare(accentColor, setAccent);
           }
         }}
         onNavigationStateChange={(navState) => {

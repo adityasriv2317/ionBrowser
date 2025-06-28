@@ -1,6 +1,6 @@
 import { MotiView, View } from "moti";
 import { TouchableOpacity, TextInput, Keyboard, Text } from "react-native";
-import { useRef, useState, useEffect, useContext } from "react";
+import { useRef, useState, useEffect, useContext, use } from "react";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import { runOnJS } from "react-native-reanimated";
 import { HugeiconsIcon } from "@hugeicons/react-native";
@@ -24,6 +24,7 @@ export default function BottomBar() {
     setIsEditing,
     isLoading,
     setPageTitle,
+    accentColor,
     setIsLoading,
   } = useContext(BrowserContext);
 
@@ -65,6 +66,9 @@ export default function BottomBar() {
 
   // color type constant
   const [colorType, setColorType] = useState(1);
+  useEffect(() => {
+    setColorType(accentColor === "light-content" ? 1 : 0);
+  }, [accentColor]);
 
   // bottomBar button states
   const [showTabs, setShowTabs] = useState(true);
@@ -189,7 +193,7 @@ export default function BottomBar() {
         style={{
           maxWidth: bottomState == "openMenu" ? "80%" : "75%",
         }}
-        className={`absolute z-100 w-full h-fit max-h-[25%] min-h-[7%] ${bottomState == "openMenu" ? "rounded-[2rem]" : "rounded-full"} border-gray-500 bottom-20 ${bottomState == "openMenu" ? "bg-black/50" : "bg-transparent"} `}
+        className={`absolute border z-100 w-full h-fit max-h-[25%] min-h-[7%] border-transparent bottom-20 ${bottomState == "openMenu" ? (colorType !== 1 ? "bg-black/70 rounded-[2rem] border-b-gray-600 border-r-gray-600 border-t-gray-400 border-l-gray-400" : "bg-black/50 rounded-[2rem] border-t-gray-600 border-l-gray-600 border-b-gray-400 border-r-gray-400") : "bg-transparent rounded-full"} `}
       >
         {/* <LGCard
           className={`${bottomState == "openMenu" ? "rounded-[2rem]" : "rounded-full"}`}
@@ -205,7 +209,7 @@ export default function BottomBar() {
 
           <TouchableOpacity
             // className="flex-1 border border-gray-400 bg-white/20 rounded-full"
-            className={`flex-1 border rounded-full ${colorType == 1 ? "bg-black/40 border-gray-800" : "bg-black/20 border-gray-400"}`}
+            className={`flex-1 border rounded-full ${colorType !== 1 ? "bg-black/70 border-t-gray-600 border-l-gray-600 border-b-gray-400 border-r-gray-400" : "bg-black/50 border-b-gray-600 border-r-gray-600 border-t-gray-400 border-l-gray-400"}`}
             onPress={() => {
               if (bottomState == "minimizedState") {
                 setBottomState("normalState");
@@ -225,17 +229,6 @@ export default function BottomBar() {
               }
             }}
           >
-            {/* <BlurView
-              intensity={100}
-              style={{
-                flex: 1,
-                borderRadius: 9999,
-                backdropFilter: "blur(10px)",
-                overflow: "hidden",
-              }}
-              className="h-full"
-              // tint="light"
-            > */}
             <View
               style={{
                 flexDirection: "row",
@@ -321,7 +314,7 @@ export default function BottomBar() {
               display: showTabs ? "flex" : "none",
             }}
             // className="bg-white/20 border border-gray-400 rounded-full p-2"
-            className={`border rounded-full p-2 ${colorType == 1 ? "bg-black/40 border-gray-800" : "bg-black/20 border-gray-400"}`}
+            className={`border rounded-full p-2 ${colorType !== 1 ? "bg-black/70 border-b-gray-600 border-r-gray-600 border-t-gray-400 border-l-gray-400" : "bg-black/50 border-t-gray-600 border-l-gray-600 border-b-gray-400 border-r-gray-400"}`}
             onPress={() => {
               if (bottomState == "tabView") {
                 setPreviousState(bottomState);
