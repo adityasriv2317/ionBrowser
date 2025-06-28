@@ -10,6 +10,7 @@ import BottomBar from "@/components/BottomBar";
 import PageView from "@/components/PageView";
 
 import HomeLiquid from "./(adons)/HomeLiquid";
+import { BlurView } from "@react-native-community/blur";
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -37,6 +38,7 @@ export default function App() {
       <BrowserProvider>
         <SafeAreaView className="w-full h-full flex items-center justify-center">
           <PageView />
+
           <BottomBar />
         </SafeAreaView>
       </BrowserProvider>

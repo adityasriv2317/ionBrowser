@@ -50,7 +50,7 @@ export default function PageView() {
         source={{ uri: currentUrl || "" }}
         style={{
           flex: 1,
-          backgroundColor: accentColor,
+          backgroundColor: "transparent",
           minHeight: 875,
           minWidth: 412,
           height: "100%",
