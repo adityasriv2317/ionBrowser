@@ -51,7 +51,7 @@ export default function PageView() {
           enabled={atTop}
           colors={["#a34f27", "#e8b827", "#e81427"]}
           progressBackgroundColor={accentColor}
-          progressViewOffset={21} // Adjusted to match the height of the gradient
+          progressViewOffset={21}
         />
       }
     >

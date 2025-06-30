@@ -9,9 +9,7 @@ const Background = () => {
         blurRadius={40}
       />
 
-      <View className="absolute inset-0 bg-black/20">
-        {/* <View className="w-4 h-4 bg-white rounded-full" /> */}
-      </View>
+      <View className="absolute inset-0 bg-black/20" />
     </View>
   );
 };

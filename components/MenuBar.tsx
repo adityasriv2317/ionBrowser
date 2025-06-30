@@ -5,16 +5,22 @@ import {
   ArrowLeftIcon,
   ArrowRightIcon,
   Settings02Icon,
-  Bookmark01Icon, // using as a placeholder for bookmark/star
+  Bookmark01Icon,
 } from "@hugeicons/core-free-icons";
 import { Pressable, View } from "react-native";
-import { GestureDetector } from "react-native-gesture-handler";
 import { useContext } from "react";
 import { BrowserContext } from "@/contexts/BrowserContext";
 
 export default function MenuBar() {
-  const { webRef, canGoBack, canGoForward, setCanGoBack, setCanGoForward } =
-    useContext(BrowserContext);
+  const {
+    webRef,
+    canGoBack,
+    canGoForward,
+    setCurrentUrl,
+    setInputValue,
+    setCanGoBack,
+    setCanGoForward,
+  } = useContext(BrowserContext);
   const menuItems = [
     {
       key: "back",
@@ -23,7 +29,11 @@ export default function MenuBar() {
       onPress: () => {
         if (canGoBack) {
           webRef.current?.goBack();
-          setCanGoBack(false); // Disable back if no more history
+          if (!webRef.current?.canGoBack) {
+            setCanGoBack(false); // Disable back if no more history
+            setInputValue(""); // Clear input if no history
+            setCurrentUrl(""); // Clear current URL
+          }
         }
       },
     },
@@ -34,7 +44,6 @@ export default function MenuBar() {
       onPress: () => {
         if (canGoForward) {
           webRef.current?.goForward();
-          setCanGoForward(false); // Disable forward if no more history
         }
       },
     },
@@ -42,7 +51,11 @@ export default function MenuBar() {
       key: "refresh",
       icon: RefreshIcon,
       label: "Refresh",
-      onPress: () => {},
+      onPress: () => {
+        if (webRef.current) {
+          webRef.current.reload();
+        }
+      },
     },
     {
       key: "download",
@@ -52,7 +65,7 @@ export default function MenuBar() {
     },
     {
       key: "bookmark",
-      icon: Bookmark01Icon, // placeholder for star/bookmark
+      icon: Bookmark01Icon,
       label: "Bookmark",
       onPress: () => {},
     },
@@ -65,8 +78,6 @@ export default function MenuBar() {
   ];
 
   return (
-    // menubar container
-    // <GestureDetector gesture={}>
     <View className="w-full max-h-full min-h-16 flex mb-4 rounded-3xl items-center justify-center p-4">
       {/* menu items */}
       <View className="flex flex-row flex-wrap w-full rounded-full gap-4 items-center justify-center">
@@ -91,8 +102,5 @@ export default function MenuBar() {
         ))}
       </View>
     </View>
-    // </GestureDetector>
   );
 }
-
-// flex-row min-h-[7%] w-full gap-2 items-center justify-between p-2

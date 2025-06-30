@@ -10,10 +10,8 @@ import { BlurView } from "expo-blur";
 
 import { BrowserContext } from "@/contexts/BrowserContext";
 import MenuBar from "./MenuBar";
-import LGCard from "./LGCard";
 
 export default function BottomBar() {
-  // url
   const {
     inputValue,
     setInputValue,
@@ -35,7 +33,6 @@ export default function BottomBar() {
 
     let input = inputValue.trim();
 
-    // If user entered something like "example", treat it as a search
     const isLikelySearch = !input.includes(".") && !input.startsWith("http");
     let url = "";
 
@@ -43,7 +40,6 @@ export default function BottomBar() {
       // Google search
       url = `https://www.google.com/search?q=${encodeURIComponent(input)}`;
     } else {
-      // Make sure it starts with http/https
       if (!/^https?:\/\//i.test(input)) {
         input = `https://${input}`;
       }
@@ -52,7 +48,6 @@ export default function BottomBar() {
         const validUrl = new URL(input);
         url = validUrl.href;
       } catch (error) {
-        // If URL constructor throws, fallback to search
         url = `https://www.google.com/search?q=${encodeURIComponent(inputValue)}`;
       }
     }
@@ -195,20 +190,13 @@ export default function BottomBar() {
         }}
         className={`absolute border z-100 w-full h-fit max-h-[25%] min-h-[7%] bottom-20 ${bottomState == "openMenu" ? (colorType !== 1 ? "bg-black/70 rounded-[2rem] border-b-gray-600 border-r-gray-600 border-t-gray-400 border-l-gray-400" : "bg-black/70 rounded-[2rem] border-t-gray-600 border-l-gray-600 border-b-gray-400 border-r-gray-400") : "bg-transparent border-transparent rounded-full"} `}
       >
-        {/* <LGCard
-          className={`${bottomState == "openMenu" ? "rounded-[2rem]" : "rounded-full"}`}
-        > */}
-
         <View
           style={{
             maxHeight: bottomState == "openMenu" ? "25%" : "100%",
           }}
           className="flex-row min-h-[7%] w-full gap-2 items-center justify-between p-2"
         >
-          {/* searchbox */}
-
           <TouchableOpacity
-            // className="flex-1 border border-gray-400 bg-white/20 rounded-full"
             className={`flex-1 border rounded-full ${colorType !== 1 ? "bg-black/70 border-t-gray-600 border-l-gray-600 border-b-gray-400 border-r-gray-400" : "bg-black/50 border-b-gray-600 border-r-gray-600 border-t-gray-400 border-l-gray-400"}`}
             onPress={() => {
               if (bottomState == "minimizedState") {
@@ -229,93 +217,88 @@ export default function BottomBar() {
               }
             }}
           >
-            {/* <LGCard className="rounded-full h-full"> */}
-              <View
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                flex: 1,
+              }}
+              className={`${isEditing ? "flex" : "hidden"}`}
+            >
+              <TextInput
+                ref={searchBoxRef}
+                disableFullscreenUI={true}
+                placeholder="Search or enter URL"
+                editable={bottomState == "minimizedState" ? false : true}
+                placeholderTextColor="#fff"
+                className="h-12"
                 style={{
-                  flexDirection: "row",
-                  alignItems: "center",
+                  paddingHorizontal: 10,
+                  color: "#fff",
+                  textAlign: "center",
                   flex: 1,
                 }}
-                className={`${isEditing ? "flex" : "hidden"}`}
-              >
-                <TextInput
-                  ref={searchBoxRef}
-                  disableFullscreenUI={true}
-                  placeholder="Search or enter URL"
-                  editable={bottomState == "minimizedState" ? false : true}
-                  placeholderTextColor="#fff"
-                  className="h-12"
-                  style={{
-                    paddingHorizontal: 10,
-                    color: "#fff",
-                    textAlign: "center",
-                    flex: 1,
-                  }}
-                  onFocus={() => {
-                    if (
-                      bottomState == "normalState" ||
-                      bottomState == "tabView" ||
-                      bottomState == "searchState"
-                    ) {
-                      setPreviousState(bottomState);
-                      setBottomState("searchState");
-                      setShowTabs(false);
-                    }
-                  }}
-                  value={inputValue}
-                  onChangeText={setInputValue}
-                  returnKeyType="search"
-                  returnKeyLabel="Search"
-                  keyboardType="web-search"
-                  onSubmitEditing={() => {
-                    // if url is changed, navigate
-                    if (
-                      inputValue !== currentUrl &&
-                      previousState == "openMenu"
-                    ) {
-                      setBottomState("normalState");
-                      setShowTabs(true);
-                    }
-                    handleNavigate();
-                  }}
-                />
-                {/* Clear button, only visible when editing and input is not empty */}
-                {inputValue.length > 0 && (
-                  <TouchableOpacity
-                    onPress={() => setInputValue("")}
-                    style={{ paddingHorizontal: 8 }}
-                  >
-                    <HugeiconsIcon
-                      icon={CancelCircleIcon}
-                      size={24}
-                      color="#fff"
-                      strokeWidth={1.5}
-                    />
-                  </TouchableOpacity>
-                )}
-              </View>
-
-              <GestureDetector gesture={textBoxCompose}>
-                <View
-                  style={{ display: isEditing ? "none" : "flex" }}
-                  className="h-10 w-full min-h-12 items-center justify-center"
+                onFocus={() => {
+                  if (
+                    bottomState == "normalState" ||
+                    bottomState == "tabView" ||
+                    bottomState == "searchState"
+                  ) {
+                    setPreviousState(bottomState);
+                    setBottomState("searchState");
+                    setShowTabs(false);
+                  }
+                }}
+                value={inputValue}
+                onChangeText={setInputValue}
+                returnKeyType="search"
+                returnKeyLabel="Search"
+                keyboardType="web-search"
+                onSubmitEditing={() => {
+                  if (
+                    inputValue !== currentUrl &&
+                    previousState == "openMenu"
+                  ) {
+                    setBottomState("normalState");
+                    setShowTabs(true);
+                  }
+                  handleNavigate();
+                }}
+              />
+              {/* Clear button, only visible when editing and input is not empty */}
+              {inputValue.length > 0 && (
+                <TouchableOpacity
+                  onPress={() => setInputValue("")}
+                  style={{ paddingHorizontal: 8 }}
                 >
-                  <Text className="text-center text-white">
-                    {pageTitle
-                      ? `${pageTitle.slice(0, 30)}`
-                      : "Search or enter URL"}
-                  </Text>
-                </View>
-              </GestureDetector>
-              {/* </BlurView> */}
-            {/* </LGCard> */}
+                  <HugeiconsIcon
+                    icon={CancelCircleIcon}
+                    size={24}
+                    color="#fff"
+                    strokeWidth={1.5}
+                  />
+                </TouchableOpacity>
+              )}
+            </View>
+
+            <GestureDetector gesture={textBoxCompose}>
+              <View
+                style={{ display: isEditing ? "none" : "flex" }}
+                className="h-10 w-full min-h-12 items-center justify-center"
+              >
+                <Text className="text-center text-white">
+                  {pageTitle
+                    ? `${pageTitle.slice(0, 30)}`
+                    : "Search or enter URL"}
+                </Text>
+              </View>
+            </GestureDetector>
           </TouchableOpacity>
           {/* tab view button */}
           <TouchableOpacity
             style={{
               display: showTabs ? "flex" : "none",
             }}
-            // className="bg-white/20 border border-gray-400 rounded-full p-2"
             className={`border rounded-full p-2 ${colorType !== 1 ? "bg-black/70 border-b-gray-600 border-r-gray-600 border-t-gray-400 border-l-gray-400" : "bg-black/50 border-t-gray-600 border-l-gray-600 border-b-gray-400 border-r-gray-400"}`}
             onPress={() => {
               if (bottomState == "tabView") {
@@ -336,7 +319,6 @@ export default function BottomBar() {
           </TouchableOpacity>
         </View>
         {bottomState === "openMenu" && <MenuBar />}
-        {/* </LGCard> */}
       </MotiView>
     </GestureDetector>
   );
