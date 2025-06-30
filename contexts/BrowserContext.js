@@ -1,4 +1,4 @@
-import React, { createContext, useState } from "react";
+import React, { createContext, useState, useRef } from "react";
 export const BrowserContext = createContext();
 
 const BrowserProvider = ({ children }) => {
@@ -8,6 +8,10 @@ const BrowserProvider = ({ children }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [accentColor, setAccent] = useState("default"); // Default accent color
+
+  const [canGoBack, setCanGoBack] = useState(false);
+  const [canGoForward, setCanGoForward] = useState(false);
+  const webRef = useRef(null);
 
   // Only update currentUrl and inputValue if url is different and not empty
   const updateHistory = (url, title) => {
@@ -36,6 +40,11 @@ const BrowserProvider = ({ children }) => {
         setIsEditing,
         isLoading,
         setIsLoading,
+        canGoBack,
+        setCanGoBack,
+        canGoForward,
+        setCanGoForward,
+        webRef,
       }}
     >
       {children}

@@ -1,5 +1,5 @@
-import { useContext, useState, useCallback } from "react";
-import { ScrollView, RefreshControl } from "react-native";
+import { useContext, useState, useCallback, useRef, useEffect } from "react";
+import { ScrollView, RefreshControl, BackHandler } from "react-native";
 import WebView from "react-native-webview";
 import { LinearGradient } from "expo-linear-gradient";
 import injectedJs from "@/constants/metaInjection";
@@ -9,16 +9,36 @@ import { colorCompare } from "@/constants/windowColors";
 export default function PageView() {
   const [accentColor, setAccentColor] = useState("transparent");
   const [refreshing, setRefreshing] = useState(false);
-  const { currentUrl, updateHistory, isLoading, setIsLoading, setAccent } =
-    useContext(BrowserContext);
+  const {
+    currentUrl,
+    updateHistory,
+    isLoading,
+    setIsLoading,
+    setAccent,
+    setCanGoBack,
+    setCanGoForward,
+    canGoBack,
+    webRef,
+  } = useContext(BrowserContext);
 
   const [atTop, setAtTop] = useState(true);
 
   const onRefresh = useCallback(() => {
     if (!atTop) return;
     setRefreshing(true);
-    // setTimeout(() => setRefreshing(false), 20000);
   }, [atTop]);
+
+  useEffect(() => {
+    const onBackPress = () => {
+      if (canGoBack && webRef.current) {
+        webRef.current.goBack();
+        return true;
+      }
+      return false;
+    };
+
+    BackHandler.addEventListener("hardwareBackPress", onBackPress);
+  }, [canGoBack, webRef]);
 
   return (
     <ScrollView
@@ -46,7 +66,8 @@ export default function PageView() {
         }}
       />
       <WebView
-        // forece re-render on refresh
+        // ref={webRef}
+        ref={webRef}
         key={refreshing ? "refreshing" : "not-refreshing"} // Force re-render on refresh
         source={{ uri: currentUrl || "" }}
         style={{
@@ -77,6 +98,9 @@ export default function PageView() {
           }
         }}
         onNavigationStateChange={(navState) => {
+          setCanGoBack(navState.canGoBack);
+          setCanGoForward(navState.canGoForward);
+
           const url = [
             "about:blank",
             "about:home",
