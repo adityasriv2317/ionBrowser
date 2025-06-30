@@ -10,6 +10,7 @@ import {
 import { Pressable, View } from "react-native";
 import { useContext } from "react";
 import { BrowserContext } from "@/contexts/BrowserContext";
+import { router } from "expo-router";
 
 export default function MenuBar() {
   const {
@@ -73,7 +74,9 @@ export default function MenuBar() {
       key: "settings",
       icon: Settings02Icon,
       label: "Settings",
-      onPress: () => {},
+      onPress: () => {
+        router.push("/settings");
+      },
     },
   ];
 
