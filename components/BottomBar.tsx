@@ -229,84 +229,86 @@ export default function BottomBar() {
               }
             }}
           >
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                flex: 1,
-              }}
-              className={`${isEditing ? "flex" : "hidden"}`}
-            >
-              <TextInput
-                ref={searchBoxRef}
-                disableFullscreenUI={true}
-                placeholder="Search or enter URL"
-                editable={bottomState == "minimizedState" ? false : true}
-                placeholderTextColor="#fff"
-                className="h-12"
+            {/* <LGCard className="rounded-full h-full"> */}
+              <View
                 style={{
-                  paddingHorizontal: 10,
-                  color: "#fff",
-                  textAlign: "center",
+                  flexDirection: "row",
+                  alignItems: "center",
                   flex: 1,
                 }}
-                onFocus={() => {
-                  if (
-                    bottomState == "normalState" ||
-                    bottomState == "tabView" ||
-                    bottomState == "searchState"
-                  ) {
-                    setPreviousState(bottomState);
-                    setBottomState("searchState");
-                    setShowTabs(false);
-                  }
-                }}
-                value={inputValue}
-                onChangeText={setInputValue}
-                returnKeyType="search"
-                returnKeyLabel="Search"
-                keyboardType="web-search"
-                onSubmitEditing={() => {
-                  // if url is changed, navigate
-                  if (
-                    inputValue !== currentUrl &&
-                    previousState == "openMenu"
-                  ) {
-                    setBottomState("normalState");
-                    setShowTabs(true);
-                  }
-                  handleNavigate();
-                }}
-              />
-              {/* Clear button, only visible when editing and input is not empty */}
-              {inputValue.length > 0 && (
-                <TouchableOpacity
-                  onPress={() => setInputValue("")}
-                  style={{ paddingHorizontal: 8 }}
-                >
-                  <HugeiconsIcon
-                    icon={CancelCircleIcon}
-                    size={24}
-                    color="#fff"
-                    strokeWidth={1.5}
-                  />
-                </TouchableOpacity>
-              )}
-            </View>
-
-            <GestureDetector gesture={textBoxCompose}>
-              <View
-                style={{ display: isEditing ? "none" : "flex" }}
-                className="h-10 w-full min-h-12 items-center justify-center"
+                className={`${isEditing ? "flex" : "hidden"}`}
               >
-                <Text className="text-center text-white">
-                  {pageTitle
-                    ? `${pageTitle.slice(0, 30)}`
-                    : "Search or enter URL"}
-                </Text>
+                <TextInput
+                  ref={searchBoxRef}
+                  disableFullscreenUI={true}
+                  placeholder="Search or enter URL"
+                  editable={bottomState == "minimizedState" ? false : true}
+                  placeholderTextColor="#fff"
+                  className="h-12"
+                  style={{
+                    paddingHorizontal: 10,
+                    color: "#fff",
+                    textAlign: "center",
+                    flex: 1,
+                  }}
+                  onFocus={() => {
+                    if (
+                      bottomState == "normalState" ||
+                      bottomState == "tabView" ||
+                      bottomState == "searchState"
+                    ) {
+                      setPreviousState(bottomState);
+                      setBottomState("searchState");
+                      setShowTabs(false);
+                    }
+                  }}
+                  value={inputValue}
+                  onChangeText={setInputValue}
+                  returnKeyType="search"
+                  returnKeyLabel="Search"
+                  keyboardType="web-search"
+                  onSubmitEditing={() => {
+                    // if url is changed, navigate
+                    if (
+                      inputValue !== currentUrl &&
+                      previousState == "openMenu"
+                    ) {
+                      setBottomState("normalState");
+                      setShowTabs(true);
+                    }
+                    handleNavigate();
+                  }}
+                />
+                {/* Clear button, only visible when editing and input is not empty */}
+                {inputValue.length > 0 && (
+                  <TouchableOpacity
+                    onPress={() => setInputValue("")}
+                    style={{ paddingHorizontal: 8 }}
+                  >
+                    <HugeiconsIcon
+                      icon={CancelCircleIcon}
+                      size={24}
+                      color="#fff"
+                      strokeWidth={1.5}
+                    />
+                  </TouchableOpacity>
+                )}
               </View>
-            </GestureDetector>
-            {/* </BlurView> */}
+
+              <GestureDetector gesture={textBoxCompose}>
+                <View
+                  style={{ display: isEditing ? "none" : "flex" }}
+                  className="h-10 w-full min-h-12 items-center justify-center"
+                >
+                  <Text className="text-center text-white">
+                    {pageTitle
+                      ? `${pageTitle.slice(0, 30)}`
+                      : "Search or enter URL"}
+                  </Text>
+                </View>
+              </GestureDetector>
+              {/* </BlurView> */}
+            {/* </LGCard> */}
           </TouchableOpacity>
           {/* tab view button */}
           <TouchableOpacity
