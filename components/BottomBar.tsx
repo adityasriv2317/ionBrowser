@@ -193,7 +193,7 @@ export default function BottomBar() {
         style={{
           maxWidth: bottomState == "openMenu" ? "80%" : "75%",
         }}
-        className={`absolute border z-100 w-full h-fit max-h-[25%] min-h-[7%] bottom-20 ${bottomState == "openMenu" ? (colorType !== 1 ? "bg-black/70 rounded-[2rem] border-b-gray-600 border-r-gray-600 border-t-gray-400 border-l-gray-400" : "bg-black/70 rounded-[2rem] border-t-gray-600 border-l-gray-600 border-b-gray-400 border-r-gray-400") : "bg-transparent rounded-full"} `}
+        className={`absolute border z-100 w-full h-fit max-h-[25%] min-h-[7%] bottom-20 ${bottomState == "openMenu" ? (colorType !== 1 ? "bg-black/70 rounded-[2rem] border-b-gray-600 border-r-gray-600 border-t-gray-400 border-l-gray-400" : "bg-black/70 rounded-[2rem] border-t-gray-600 border-l-gray-600 border-b-gray-400 border-r-gray-400") : "bg-transparent border-transparent rounded-full"} `}
       >
         {/* <LGCard
           className={`${bottomState == "openMenu" ? "rounded-[2rem]" : "rounded-full"}`}
