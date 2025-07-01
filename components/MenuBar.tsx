@@ -31,9 +31,9 @@ export default function MenuBar() {
         if (canGoBack) {
           webRef.current?.goBack();
           if (!webRef.current?.canGoBack) {
-            setCanGoBack(false); // Disable back if no more history
-            setInputValue(""); // Clear input if no history
-            setCurrentUrl(""); // Clear current URL
+            setCanGoBack(false);
+            setInputValue("");
+            setCurrentUrl("");
           }
         }
       },
@@ -75,7 +75,7 @@ export default function MenuBar() {
       icon: Settings02Icon,
       label: "Settings",
       onPress: () => {
-        router.push("/settings");
+        // router.push("/settings");
       },
     },
   ];
@@ -94,7 +94,7 @@ export default function MenuBar() {
               justifyContent: "center",
               width: 56,
               height: 56,
-              borderRadius: 28, // full rounded
+              borderRadius: 28,
               marginHorizontal: 4,
               padding: 4,
               marginVertical: 4,
