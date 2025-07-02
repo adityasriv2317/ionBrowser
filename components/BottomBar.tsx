@@ -6,7 +6,6 @@ import { runOnJS } from "react-native-reanimated";
 import { HugeiconsIcon } from "@hugeicons/react-native";
 import { CreditCardIcon, CancelCircleIcon } from "@hugeicons/core-free-icons";
 import { animationConfig, BottomBarState } from "@/constants/bottomBar";
-import { BlurView } from "expo-blur";
 
 import { BrowserContext } from "@/contexts/BrowserContext";
 import MenuBar from "./MenuBar";
