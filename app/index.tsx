@@ -10,6 +10,7 @@ import BottomBar from "@/components/BottomBar";
 import PageView from "@/components/PageView";
 
 import HomeLiquid from "./(adons)/HomeLiquid";
+import { TabProvider } from "@/contexts/TabContext";
 
 export default function App() {
   const router = useRouter();
@@ -32,12 +33,14 @@ export default function App() {
       style={{ backgroundColor: "transparent", width: "100%", height: "100%" }}
     >
       <HomeLiquid />
-      <BrowserProvider>
-        <SafeAreaView className="w-full h-full flex items-center justify-center">
-          <PageView />
-          <BottomBar />
-        </SafeAreaView>
-      </BrowserProvider>
+      <TabProvider>
+        <BrowserProvider>
+          <SafeAreaView className="w-full h-full flex items-center justify-center">
+            <PageView />
+            <BottomBar />
+          </SafeAreaView>
+        </BrowserProvider>
+      </TabProvider>
     </View>
   );
 }
