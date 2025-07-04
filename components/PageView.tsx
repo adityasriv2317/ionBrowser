@@ -6,7 +6,12 @@ import injectedJs from "@/constants/metaInjection";
 import { BrowserContext } from "@/contexts/BrowserContext";
 import { colorCompare } from "@/constants/windowColors";
 
+import { useTabManager } from "@/contexts/TabContext";
+
 export default function PageView() {
+  const { tabs } = useTabManager();
+  const activeTab = tabs.find((tab) => tab.isActive);
+
   const [accentColor, setAccentColor] = useState("transparent");
   const [refreshing, setRefreshing] = useState(false);
   const {
