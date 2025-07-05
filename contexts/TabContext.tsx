@@ -1,6 +1,8 @@
 import React, { useState, useContext, createContext } from "react";
 import { Tab } from "@/types/tabs";
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
+import uuid from "react-native-uuid";
+
 
 type tabContextType = {
   tabs: Tab[]; // Array of tabs
@@ -16,7 +18,7 @@ const TabContext = createContext<tabContextType | undefined>(undefined);
 export const TabProvider = ({ children }: { children: React.ReactNode }) => {
   const [tabs, setTabs] = useState<Tab[]>([
     {
-      id: uuidv4(),
+      id: uuid.v4() as string,
       title: "New Tab",
       url: "",
       isActive: true,
@@ -32,7 +34,7 @@ export const TabProvider = ({ children }: { children: React.ReactNode }) => {
 
   const addTab = (url: string = "") => {
     const newTab: Tab = {
-      id: uuidv4(),
+      id: uuid.v4() as string,
       title: "New Tab",
       url: url,
       isActive: false,
