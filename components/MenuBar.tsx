@@ -75,7 +75,7 @@ export default function MenuBar() {
       icon: Settings02Icon,
       label: "Settings",
       onPress: () => {
-        // router.push("/settings");
+        router.push("/settings");
       },
     },
   ];
