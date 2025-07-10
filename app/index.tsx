@@ -11,6 +11,7 @@ import PageView from "@/components/PageView";
 
 import HomeLiquid from "./(adons)/HomeLiquid";
 import { TabProvider } from "@/contexts/TabContext";
+import TabsList from "@/components/TabsList";
 
 export default function App() {
   const router = useRouter();
@@ -36,7 +37,8 @@ export default function App() {
       <TabProvider>
         <BrowserProvider>
           <SafeAreaView className="w-full h-full flex items-center justify-center">
-            <PageView />
+            {/* <PageView /> */}
+            <TabsList />
             <BottomBar />
           </SafeAreaView>
         </BrowserProvider>

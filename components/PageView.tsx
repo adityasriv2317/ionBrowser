@@ -5,6 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import injectedJs from "@/constants/metaInjection";
 import { BrowserContext } from "@/contexts/BrowserContext";
 import { colorCompare } from "@/constants/windowColors";
+import Animated from "react-native-reanimated";
 
 import { useTabManager } from "@/contexts/TabContext";
 
@@ -17,12 +18,13 @@ export default function PageView() {
   const {
     currentUrl,
     updateHistory,
-    isLoading,
     setIsLoading,
     setAccent,
     setCanGoBack,
     setCanGoForward,
     canGoBack,
+    showTabs,
+    setShowTabs,
     webRef,
   } = useContext(BrowserContext);
 
@@ -46,7 +48,7 @@ export default function PageView() {
   }, [canGoBack, webRef]);
 
   return (
-    <ScrollView
+    <Animated.ScrollView
       contentContainerStyle={{ flexGrow: 1 }}
       style={{ position: "absolute", inset: 0 }}
       refreshControl={
@@ -71,9 +73,8 @@ export default function PageView() {
         }}
       />
       <WebView
-        // ref={webRef}
         ref={webRef}
-        key={refreshing ? "refreshing" : "not-refreshing"} // Force re-render on refresh
+        key={refreshing ? "refreshing" : "not-refreshing"}
         source={{ uri: currentUrl || "" }}
         style={{
           flex: 1,
@@ -120,6 +121,6 @@ export default function PageView() {
           setIsLoading(navState.loading);
         }}
       />
-    </ScrollView>
+    </Animated.ScrollView>
   );
 }
