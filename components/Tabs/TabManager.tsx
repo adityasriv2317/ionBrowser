@@ -1,13 +1,10 @@
-import { ScrollView, View, Image, Dimensions } from "react-native";
-import {
-  useAnimatedRef,
-  useScrollViewOffset,
-} from "react-native-reanimated";
+import { View } from "moti";
+import TabItem, { dimensions } from "./TabItem";
 import { images } from "@/constants/imgs";
-import { dimension, TabItems } from "./TabItems";
+import { useAnimatedRef, useScrollViewOffset } from "react-native-reanimated";
 import Animated from "react-native-reanimated";
 
-export default function TabsList() {
+export default function TabManager() {
   const scrollRef = useAnimatedRef<Animated.ScrollView>();
   const scrollOffset = useScrollViewOffset(scrollRef);
 
@@ -15,26 +12,31 @@ export default function TabsList() {
     <View className="flex-1 absolute inset-0 items-center">
       <View
         style={{
-          marginTop: Dimensions.get("window").height * 0.15,
-          height: dimension.height,
+          marginTop: dimensions.windowHeight * 0.15,
+          height: dimensions.height,
           width: "100%",
         }}
       >
         <Animated.ScrollView
           ref={scrollRef}
-          horizontal={true}
+          horizontal
           showsHorizontalScrollIndicator={false}
-          // scrollEventThrottle={33}
+          scrollEventThrottle={6}
+          bounces={false}
           contentContainerStyle={{
             width:
-              dimension.width * images.length +
-              dimension.windowWidth -
-              dimension.width,
+              dimensions.width * images.length +
+              dimensions.windowWidth -
+              dimensions.width,
           }}
-          snapToInterval={dimension.width}
+          snapToInterval={dimensions.width}
+          style={{
+            transform: [{ scaleX: -1 }],
+            overflow: "visible",
+          }}
         >
           {images.map((img, i) => (
-            <TabItems
+            <TabItem
               key={i}
               imageSource={img.image}
               index={i}

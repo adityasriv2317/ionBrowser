@@ -1,19 +1,19 @@
-import { MotiView, View } from "moti";
-import { TouchableOpacity, TextInput, Keyboard, Text } from "react-native";
-import { useRef, useState, useEffect, useContext } from "react";
-import { GestureDetector, Gesture } from "react-native-gesture-handler";
-import { runOnJS } from "react-native-reanimated";
-import { HugeiconsIcon } from "@hugeicons/react-native";
+import { animationConfig, BottomBarState } from "@/constants/bottomBar";
 import {
-  CreditCardIcon,
-  CancelCircleIcon,
-  Delete03Icon,
-  PlusSignIcon,
-  IncognitoIcon,
   Archive03Icon,
+  CancelCircleIcon,
+  CreditCardIcon,
+  Delete03Icon,
+  IncognitoIcon,
+  PlusSignIcon,
   SearchAreaIcon,
 } from "@hugeicons/core-free-icons";
-import { animationConfig, BottomBarState } from "@/constants/bottomBar";
+import { HugeiconsIcon } from "@hugeicons/react-native";
+import { MotiView, View } from "moti";
+import { useContext, useEffect, useRef, useState } from "react";
+import { Keyboard, Text, TextInput, TouchableOpacity } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { runOnJS } from "react-native-reanimated";
 
 import { BrowserContext } from "@/contexts/BrowserContext";
 import MenuBar from "./MenuBar";
