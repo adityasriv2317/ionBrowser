@@ -9,6 +9,8 @@ const BrowserProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [accentColor, setAccent] = useState("default"); // Default accent color
 
+  const [showTabs, setShowTabs] = useState(false);
+
   const [canGoBack, setCanGoBack] = useState(false);
   const [canGoForward, setCanGoForward] = useState(false);
   const webRef = useRef(null);
@@ -45,6 +47,8 @@ const BrowserProvider = ({ children }) => {
         canGoForward,
         setCanGoForward,
         webRef,
+        showTabs,
+        setShowTabs,
       }}
     >
       {children}

@@ -1,6 +1,6 @@
 import { MotiView, View } from "moti";
 import { TouchableOpacity, TextInput, Keyboard, Text } from "react-native";
-import { useRef, useState, useEffect, useContext, use } from "react";
+import { useRef, useState, useEffect, useContext } from "react";
 import { GestureDetector, Gesture } from "react-native-gesture-handler";
 import { runOnJS } from "react-native-reanimated";
 import { HugeiconsIcon } from "@hugeicons/react-native";
@@ -10,8 +10,6 @@ import {
   Delete03Icon,
   PlusSignIcon,
   IncognitoIcon,
-  Archive01Icon,
-  Archive02Icon,
   Archive03Icon,
   SearchAreaIcon,
 } from "@hugeicons/core-free-icons";
@@ -33,6 +31,7 @@ export default function BottomBar() {
     setPageTitle,
     accentColor,
     setIsLoading,
+    setShowTabs,
   } = useContext(BrowserContext);
 
   const handleNavigate = () => {
@@ -75,7 +74,7 @@ export default function BottomBar() {
   }, [accentColor]);
 
   // bottomBar button states
-  const [showTabs, setShowTabs] = useState(true);
+  const [showTabButton, setShowTabButton] = useState(true);
   const searchBoxRef = useRef<TextInput>(null);
   // bottom bar animation states
   const [bottomState, setBottomState] = useState<BottomBarState>("normalState");
@@ -99,26 +98,26 @@ export default function BottomBar() {
   const tapGesture = Gesture.Tap().onEnd(() => {
     if (bottomState == "minimizedState") {
       runOnJS(setBottomState)("normalState");
-      runOnJS(setShowTabs)(true);
+      runOnJS(setShowTabButton)(true);
     }
   });
   const swipeGesture = Gesture.Pan().onEnd((e) => {
     if (e.velocityY < -50) {
       // Swipe up
       if (bottomState == "minimizedState") {
-        runOnJS(setShowTabs)(true);
+        runOnJS(setShowTabButton)(true);
         runOnJS(setBottomState)("normalState");
       } else if (bottomState == "normalState") {
-        runOnJS(setShowTabs)(false);
+        runOnJS(setShowTabButton)(false);
         runOnJS(setBottomState)("openMenu");
       }
     } else if (e.velocityY > 50) {
       // Swipe down
       if (bottomState == "openMenu") {
-        runOnJS(setShowTabs)(true);
+        runOnJS(setShowTabButton)(true);
         runOnJS(setBottomState)("normalState");
       } else {
-        runOnJS(setShowTabs)(false);
+        runOnJS(setShowTabButton)(false);
         runOnJS(setBottomState)("minimizedState");
       }
     }
@@ -128,7 +127,7 @@ export default function BottomBar() {
     if (bottomState == "minimizedState") {
       runOnJS(setIsEditing)(false);
       runOnJS(setBottomState)("normalState");
-      runOnJS(setShowTabs)(true);
+      runOnJS(setShowTabButton)(true);
     } else if (bottomState == "normalState" || bottomState == "tabView") {
       runOnJS(setIsEditing)(true);
     }
@@ -137,19 +136,19 @@ export default function BottomBar() {
     if (e.velocityY < -50) {
       // Swipe up
       if (bottomState == "minimizedState") {
-        runOnJS(setShowTabs)(true);
+        runOnJS(setShowTabButton)(true);
         runOnJS(setBottomState)("normalState");
       } else if (bottomState == "normalState") {
-        runOnJS(setShowTabs)(false);
+        runOnJS(setShowTabButton)(false);
         runOnJS(setBottomState)("openMenu");
       }
     } else if (e.velocityY > 50) {
       // Swipe down
       if (bottomState == "openMenu") {
-        runOnJS(setShowTabs)(true);
+        runOnJS(setShowTabButton)(true);
         runOnJS(setBottomState)("normalState");
       } else {
-        runOnJS(setShowTabs)(false);
+        runOnJS(setShowTabButton)(false);
         runOnJS(setBottomState)("minimizedState");
       }
     }
@@ -166,18 +165,18 @@ export default function BottomBar() {
       } else if (bottomState === "minimizedState") {
         setBottomState("normalState");
         setIsEditing(false);
-        setShowTabs(true);
+        setShowTabButton(true);
       } else if (
         bottomState === "searchState" &&
         previousState === "normalState"
       ) {
         setBottomState("normalState");
         setIsEditing(false);
-        setShowTabs(true);
+        setShowTabButton(true);
       } else if (bottomState === "searchState" && previousState === "tabView") {
         setBottomState("tabView");
         setIsEditing(false);
-        setShowTabs(true);
+        setShowTabButton(true);
       } else if (
         bottomState === "searchState" &&
         previousState === "openMenu"
@@ -186,7 +185,7 @@ export default function BottomBar() {
         setBottomState("openMenu");
       } else {
         setBottomState("minimizedState");
-        setShowTabs(false);
+        setShowTabButton(false);
       }
 
       searchBoxRef.current?.blur();
@@ -203,7 +202,7 @@ export default function BottomBar() {
   }, [bottomState]);
 
   return (
-    <View className="w-full h-full items-center">
+    <View className="flex-1 h-fit items-center justify-center">
       {/* actual bottom bar */}
       <GestureDetector gesture={gestureCompose}>
         <MotiView
@@ -226,7 +225,7 @@ export default function BottomBar() {
                 if (bottomState == "minimizedState") {
                   setBottomState("normalState");
                   setIsEditing(false);
-                  setShowTabs(true);
+                  setShowTabButton(true);
                 } else if (
                   bottomState == "normalState" ||
                   bottomState == "tabView"
@@ -270,7 +269,7 @@ export default function BottomBar() {
                     ) {
                       setPreviousState(bottomState);
                       setBottomState("searchState");
-                      setShowTabs(false);
+                      setShowTabButton(false);
                     }
                   }}
                   value={inputValue}
@@ -284,7 +283,7 @@ export default function BottomBar() {
                       previousState == "openMenu"
                     ) {
                       setBottomState("normalState");
-                      setShowTabs(true);
+                      setShowTabButton(true);
                     }
                     handleNavigate();
                   }}
@@ -321,15 +320,17 @@ export default function BottomBar() {
             {/* tab view button */}
             <TouchableOpacity
               style={{
-                display: showTabs ? "flex" : "none",
+                display: showTabButton ? "flex" : "none",
               }}
               className={`border rounded-full p-2 ${colorType !== 1 ? "bg-black/70 border-b-gray-600 border-r-gray-600 border-t-gray-400 border-l-gray-400" : "bg-black/50 border-t-gray-600 border-l-gray-600 border-b-gray-400 border-r-gray-400"}`}
               onPress={() => {
                 if (bottomState == "tabView") {
                   setPreviousState(bottomState);
                   setBottomState("normalState");
+                  setShowTabs(false);
                 } else {
                   setPreviousState(bottomState);
+                  setShowTabs(true);
                   setBottomState("tabView");
                 }
               }}
