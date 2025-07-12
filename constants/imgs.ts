@@ -14,4 +14,16 @@ export const images = [
   {
     image: require("@/assets/util/vg.jpg"),
   },
+  {
+    image: require("@/assets/util/a.jpg"),
+  },
+  {
+    image: require("@/assets/util/b.jpg"),
+  },
+  {
+    image: require("@/assets/util/c.jpg"),
+  },
+  {
+    image: require("@/assets/util/d.jpg"),
+  },
 ];

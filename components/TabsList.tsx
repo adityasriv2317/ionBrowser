@@ -24,7 +24,7 @@ export default function TabsList() {
           ref={scrollRef}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
-          // scrollEventThrottle={33}
+          scrollEventThrottle={16}
           contentContainerStyle={{
             width:
               dimension.width * images.length +

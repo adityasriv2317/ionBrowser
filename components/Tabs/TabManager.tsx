@@ -1,4 +1,5 @@
 import { View } from "moti";
+import React from "react";
 import TabItem, { dimensions } from "./TabItem";
 import { images } from "@/constants/imgs";
 import { useAnimatedRef, useScrollViewOffset } from "react-native-reanimated";
@@ -9,7 +10,7 @@ export default function TabManager() {
   const scrollOffset = useScrollViewOffset(scrollRef);
 
   return (
-    <View className="flex-1 absolute inset-0 items-center">
+    <View className="w-full h-full absolute items-center">
       <View
         style={{
           marginTop: dimensions.windowHeight * 0.15,
@@ -21,8 +22,7 @@ export default function TabManager() {
           ref={scrollRef}
           horizontal
           showsHorizontalScrollIndicator={false}
-          scrollEventThrottle={6}
-          bounces={false}
+          scrollEventThrottle={16}
           contentContainerStyle={{
             width:
               dimensions.width * images.length +

@@ -12,6 +12,9 @@ export const dimensions = {
   height: Dimensions.get("window").height * 0.65,
   windowWidth: Dimensions.get("window").width,
   windowHeight: Dimensions.get("window").height,
+  paddingRight:
+    (Dimensions.get("window").width - Dimensions.get("window").width * 0.65) /
+    2,
 };
 
 type TabItemsProps = {
@@ -25,8 +28,6 @@ const TabItem: React.FC<TabItemsProps> = ({
   index,
   scrollOffset,
 }) => {
-  const paddingRight = (dimensions.windowWidth - dimensions.width) / 2;
-
   const rStyle = useAnimatedStyle(() => {
     const current = scrollOffset.value / dimensions.width;
 
@@ -34,11 +35,11 @@ const TabItem: React.FC<TabItemsProps> = ({
       current,
       [index - 3, index - 2, index - 1, index, index + 1],
       [
-        dimensions.width + paddingRight,
-        (dimensions.width + paddingRight) / 1.5,
-        (dimensions.width + paddingRight) / 1.6,
+        dimensions.width + dimensions.paddingRight,
+        (dimensions.width + dimensions.paddingRight) / 1.5,
+        (dimensions.width + dimensions.paddingRight) / 1.6,
         0,
-        -(dimensions.width - paddingRight) / 5,
+        -(dimensions.width - dimensions.paddingRight) / 5,
       ],
       Extrapolation.CLAMP
     );
