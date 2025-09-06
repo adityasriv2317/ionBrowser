@@ -2,6 +2,7 @@ import { View } from "moti";
 import React from "react";
 import TabItem, { dimensions } from "./TabItem";
 import { images } from "@/constants/imgs";
+import { Text } from "react-native";
 import { useAnimatedRef, useScrollViewOffset } from "react-native-reanimated";
 import Animated from "react-native-reanimated";
 
@@ -39,6 +40,7 @@ export default function TabManager() {
             <TabItem
               key={i}
               imageSource={img.image}
+              color={img.color}
               index={i}
               scrollOffset={scrollOffset}
             />

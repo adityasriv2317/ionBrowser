@@ -11,7 +11,9 @@ import BrowserProvider from "@/contexts/BrowserContext";
 import { TabProvider } from "@/contexts/TabContext";
 import HomeLiquid from "./(adons)/HomeLiquid";
 import TabsList from "@/components/TabsList";
+import PageView from "@/components/PageView";
 import TabManager from "@/components/Tabs/TabManager";
+import TinderCards from "@/components/TinderCards.tsx/TinderCards";
 
 export default function App() {
   const router = useRouter();
@@ -39,7 +41,8 @@ export default function App() {
           <SafeAreaView className="w-full h-full flex items-center justify-center">
             {/* <PageView /> */}
             {/* <TabsList /> */}
-            <TabManager />
+            {/* <TabManager /> */}
+            <TinderCards />
             <BottomBar />
           </SafeAreaView>
         </BrowserProvider>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Dimensions, ImageSourcePropType, Image } from "react-native";
+import { Dimensions, ImageSourcePropType, Image, View } from "react-native";
 import Animated, {
   Extrapolation,
   interpolate,
@@ -12,42 +12,41 @@ export const dimensions = {
   height: Dimensions.get("window").height * 0.65,
   windowWidth: Dimensions.get("window").width,
   windowHeight: Dimensions.get("window").height,
-  paddingRight:
-    (Dimensions.get("window").width - Dimensions.get("window").width * 0.65) /
-    2,
 };
 
 type TabItemsProps = {
   imageSource: ImageSourcePropType;
   index: number;
   scrollOffset: SharedValue<number>;
+  color?: string;
 };
 
 const TabItem: React.FC<TabItemsProps> = ({
   imageSource,
   index,
   scrollOffset,
+  color,
 }) => {
   const rStyle = useAnimatedStyle(() => {
-    const current = scrollOffset.value / dimensions.width;
+    //  339.42857142857144 226.2857142857143 212.14285714285714 0 -39.08571428571429
+
+    const current =
+      Number(scrollOffset.value.toFixed(0)) /
+      Number(dimensions.width.toFixed(0));
 
     const translateX = interpolate(
       current,
-      [index - 3, index - 2, index - 1, index, index + 1],
-      [
-        dimensions.width + dimensions.paddingRight,
-        (dimensions.width + dimensions.paddingRight) / 1.5,
-        (dimensions.width + dimensions.paddingRight) / 1.6,
-        0,
-        -(dimensions.width - dimensions.paddingRight) / 5,
-      ],
+      // [index - 3, index - 2, index - 1, index, index + 1],
+      // [339, 226, 212, 0, -50],
+      [index - 1, index, index + 1],
+      [dimensions.width+10, 0, -50],
       Extrapolation.CLAMP
     );
 
     const scale = interpolate(
       current,
       [index - 2, index - 1, index, index + 1],
-      [0.9, 0.9, 1, 0.8],
+      [0.9, 0.9, 1, 0.9],
       Extrapolation.CLAMP
     );
 
@@ -58,11 +57,14 @@ const TabItem: React.FC<TabItemsProps> = ({
       Extrapolation.CLAMP
     );
 
+    index == 0 && console.log(translateX, translateX + scrollOffset.value);
+
     return {
       transform: [
         { translateX: scrollOffset.value + translateX },
-        { scale },
-        { rotateY: `${rotateY}rad` },
+        // { translateX: scrollOffset.value },
+        // { scale },
+        // { rotateY: `${rotateY}rad` },
       ],
     };
   });
