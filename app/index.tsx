@@ -1,17 +1,19 @@
 import { useRouter } from "expo-router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { View } from "react-native";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "moti";
 
+import BottomBar from "@/components/BottomBar/BottomBar";
 import BrowserProvider from "@/contexts/BrowserContext";
-import BottomBar from "@/components/BottomBar";
-import PageView from "@/components/PageView";
 
-import HomeLiquid from "./(adons)/HomeLiquid";
 import { TabProvider } from "@/contexts/TabContext";
+import HomeLiquid from "./(adons)/HomeLiquid";
 import TabsList from "@/components/TabsList";
+import PageView from "@/components/PageView";
+import TabManager from "@/components/Tabs/TabManager";
+import TinderCards from "@/components/TinderCards.tsx/TinderCards";
 
 export default function App() {
   const router = useRouter();
@@ -38,7 +40,9 @@ export default function App() {
         <BrowserProvider>
           <SafeAreaView className="w-full h-full flex items-center justify-center">
             {/* <PageView /> */}
-            <TabsList />
+            {/* <TabsList /> */}
+            {/* <TabManager /> */}
+            <TinderCards />
             <BottomBar />
           </SafeAreaView>
         </BrowserProvider>

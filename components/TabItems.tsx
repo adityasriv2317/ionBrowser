@@ -45,14 +45,7 @@ export const TabItems: React.FC<TabItemsProps> = ({
     );
 
     return {
-      transform: [
-        // translateX: index * 20 - scrollOffset.value,
-        { translateX: scrollOffset.value + translateX },
-        // {
-        //   scale: 1 - index * 0.01, // Scale down each subsequent image
-        // },
-        { scale },
-      ],
+      transform: [{ translateX: scrollOffset.value + translateX }, { scale }],
     };
   }, []);
 
@@ -60,20 +53,10 @@ export const TabItems: React.FC<TabItemsProps> = ({
     <Animated.View
       style={[
         {
-          // width: dimension.width,
-          // height: dimension.height,
           position: "absolute",
           left: paddingLeft,
           zIndex: -index,
-          transform: [
-            //   {
-            //     // translateX: index * dimension.width,
-            //     translateX: index * 20,
-            //   },
-            // {
-            //   scale: 1 - index * 0.01, // Scale down each subsequent image
-            // },
-          ],
+          transform: [],
         },
         rStyle,
       ]}
@@ -89,16 +72,3 @@ export const TabItems: React.FC<TabItemsProps> = ({
     </Animated.View>
   );
 };
-
-// style={{
-//         position: "absolute",
-//         zIndex: index,
-//         transform: [
-//           {
-//             translateX: index * -dimension.width + dimension.width * 1.25,
-//           },
-//           {
-//             scaleX: -1, // Flip the image horizontally
-//           },
-//         ],
-//       }}
